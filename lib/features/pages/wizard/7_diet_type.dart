@@ -53,44 +53,51 @@ class WizardDietType extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(height: 38.h),
-                // Back Button
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-                      onPressed: () {
-                        // Navigate back using the wizard provider
-                        Provider.of<WizardProvider>(context, listen: false).prevPage();
-                      },
-                    ),
-                  ),
-                ),
-                // App Title
+                // Header Row with Back Button and App Title
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Text(
-                    'wizard_hear_about_us.app_title'.tr(),
-                    style: TextStyle(
-                      fontFamily: 'RusticRoadway',
-                      color: colorScheme.primary,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    children: [
+                      // Back Button
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.surface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                          onPressed: () {
+                            // Navigate back using the wizard provider
+                            Provider.of<WizardProvider>(context, listen: false).prevPage();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(isRtl ? 20 : -20, 0),
+                            child: Text(
+                              'wizard_hear_about_us.app_title'.tr(),
+                              style: TextStyle(
+                                fontFamily: 'RusticRoadway',
+                                color: colorScheme.primary,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(

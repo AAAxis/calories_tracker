@@ -311,8 +311,7 @@ class _WizardNotificationState extends State<WizardNotification> {
           label: 'wizard_notification.continue'.tr(),
           onPressed: () {
             HapticFeedback.mediumImpact();
-            // Your action here
-            Provider.of<WizardProvider>(context, listen: false).nextPage();
+            _navigateToComments();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

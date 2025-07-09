@@ -46,6 +46,8 @@ class WizardMotivationAchiement extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, ColorScheme colorScheme, double weightDifference, bool isGain) {
+    final isRtl = Localizations.localeOf(context).languageCode == 'he';
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
@@ -56,46 +58,52 @@ class WizardMotivationAchiement extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 38.h), // Top padding
-                // Back Button
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 8.w, top: 0), // Remove top margin, already have SizedBox
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Provider.of<WizardProvider>(context, listen: false).prevPage();
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(height: 12.h), // Space between back button and title
-                // App Title
+                SizedBox(height: 38.h),
+                // Header Row with Back Button and App Title
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Text(
-                    'wizard_hear_about_us.app_title'.tr(),
-                    style: TextStyle(
-                      fontFamily: 'RusticRoadway',
-                      color: colorScheme.primary,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    children: [
+                      // Back Button
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.surface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                          onPressed: () {
+                            // Navigate back using the wizard provider
+                            Provider.of<WizardProvider>(context, listen: false).prevPage();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(isRtl ? 20 : -20, 0),
+                            child: Text(
+                              'wizard_hear_about_us.app_title'.tr(),
+                              style: TextStyle(
+                                fontFamily: 'RusticRoadway',
+                                color: colorScheme.primary,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -108,19 +116,37 @@ class WizardMotivationAchiement extends StatelessWidget {
                         children: [
                           SizedBox(height: Constants.beforeIcon),
                           SizedBox(height: 200.h), // Fixed spacing instead of Spacer
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Image.asset(
-                                AppAnimations.goal,
-                                width: 60.w,
-                                height: 60.h,
-                                fit: BoxFit.contain,
-                                gaplessPlayback: true,
+                              // Background images (larger and positioned over text)
+                              Positioned(
+                                left: -30.w,
+                                child: Image.asset(
+                                  AppAnimations.goal,
+                                  width: 120.w,
+                                  height: 120.h,
+                                  fit: BoxFit.contain,
+                                  gaplessPlayback: true,
+                                ),
                               ),
-                              SizedBox(width: 8.w),
-                              Expanded(
+                              Positioned(
+                                right: -30.w,
+                                child: Transform(
+                                  alignment: Alignment.center,
+                                  transform: Matrix4.rotationY(3.14159),
+                                  child: Image.asset(
+                                    AppAnimations.goal,
+                                    width: 120.w,
+                                    height: 120.h,
+                                    fit: BoxFit.contain,
+                                    gaplessPlayback: true,
+                                  ),
+                                ),
+                              ),
+                              // Text content (centered and overlaid)
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 40.w),
                                 child: Text.rich(
                                   TextSpan(
                                     children: [
@@ -153,18 +179,6 @@ class WizardMotivationAchiement extends StatelessWidget {
                                     ],
                                   ),
                                   textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.rotationY(3.14159),
-                                child: Image.asset(
-                                  AppAnimations.goal,
-                                  width: 60.w,
-                                  height: 60.h,
-                                  fit: BoxFit.contain,
-                                  gaplessPlayback: true,
                                 ),
                               ),
                             ],

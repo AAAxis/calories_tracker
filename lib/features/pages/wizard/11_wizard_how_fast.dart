@@ -24,6 +24,7 @@ class WizardHowFast extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<WizardProvider>(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final isRtl = Localizations.localeOf(context).languageCode == 'he';
 
     final steps = [0.1, 0.8, 1.5];
     final current = provider.goalSpeed;
@@ -59,44 +60,51 @@ class WizardHowFast extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(height: 38.h),
-                // Back Button
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-                      onPressed: () {
-                        // Navigate back using the wizard provider
-                        Provider.of<WizardProvider>(context, listen: false).prevPage();
-                      },
-                    ),
-                  ),
-                ),
-                // App Title
+                // Header Row with Back Button and App Title
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Text(
-                    'wizard_hear_about_us.app_title'.tr(),
-                    style: TextStyle(
-                      fontFamily: 'RusticRoadway',
-                      color: colorScheme.primary,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    children: [
+                      // Back Button
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.surface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                          onPressed: () {
+                            // Navigate back using the wizard provider
+                            Provider.of<WizardProvider>(context, listen: false).prevPage();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(isRtl ? 20 : -20, 0),
+                            child: Text(
+                              'wizard_hear_about_us.app_title'.tr(),
+                              style: TextStyle(
+                                fontFamily: 'RusticRoadway',
+                                color: colorScheme.primary,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -139,7 +147,23 @@ class WizardHowFast extends StatelessWidget {
                           SizedBox(height: 50.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                            children: isRtl ? [
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.tiger_g,
+                                inactiveAsset: AppIcons.tiger_b,
+                                active: active == 2,
+                              ),
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.horse_g,
+                                inactiveAsset: AppIcons.horse_b,
+                                active: active == 1,
+                              ),
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.rabbit_g,
+                                inactiveAsset: AppIcons.rabbit_b,
+                                active: active == 0,
+                              ),
+                            ] : [
                               _SpeedAnimalItem(
                                 activeAsset: AppAnimations.rabbit_g,
                                 inactiveAsset: AppIcons.rabbit_b,
@@ -269,17 +293,17 @@ class _SpeedAnimalItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: active
-        ? Image.asset(
-            activeAsset,
-            width: 50.w,
-            height: 50.w,
-            fit: BoxFit.contain,
-            gaplessPlayback: true,
-          )
-        : WizardIcon(
-            assetPath: inactiveAsset,
-            size: 50,
-          ),
+          ? Image.asset(
+        activeAsset,
+        width: 50.w,
+        height: 50.w,
+        fit: BoxFit.contain,
+        gaplessPlayback: true,
+      )
+          : WizardIcon(
+        assetPath: inactiveAsset,
+        size: 50,
+      ),
     );
   }
 }
