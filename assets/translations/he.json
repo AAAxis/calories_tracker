@@ -809,12 +809,13 @@
     "continue": "המשך"
   },
   "wizard_referral": {
-    "enter_code": "הכנס קוד הפניה",
+    "enter_code": "הכנס קוד ",
     "submit": "שלח",
     "invalid_code": "אנא הכנס קוד בן 6 ספרות תקין",
-    "title": "Enter referral code (optional)",
+    "title": "הכנס קוד",
     "continue": "המשך",
-    "subtitle": "You can skip this step"
+    "subtitle": "ניתן לדלג על שלב זה",
+    "promo_code": "קוד קופון"
   },
   "login": {
     "continue_with_apple": "המשך עם Apple",

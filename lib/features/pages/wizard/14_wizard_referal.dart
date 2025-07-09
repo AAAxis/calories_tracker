@@ -139,7 +139,7 @@ class _WizardReferalState extends State<WizardReferal> {
                             controller: referralController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Referral Code',
+                              hintText: 'Promo Code',
                               hintStyle: TextStyle(
                                 color: colorScheme.onSurface.withOpacity(0.5),
                               ),
@@ -174,7 +174,7 @@ class _WizardReferalState extends State<WizardReferal> {
                             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                           ),
                           onPressed: referralController.text.trim().isNotEmpty ? _checkPromo : null,
-                          child: Text('Submit'),
+                          child: Text('wizard_referral.submit'.tr()),
                         ),
                         SizedBox(width: 8.w),
                         if (isPromoValid != null)

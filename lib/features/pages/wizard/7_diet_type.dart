@@ -47,141 +47,171 @@ class WizardDietType extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            SizedBox(height: 38.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
-                'wizard_hear_about_us.app_title'.tr(),
-                style: TextStyle(
-                  fontFamily: 'RusticRoadway',
-                  color: colorScheme.primary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 120.h),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: Constants.beforeIcon),
-                      Text(
-                        'wizard_diet_type.title'.tr(),
-                        style: AppTextStyles.headingLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: kTitleTextStyle.fontSize,
-                          color: colorScheme.onSurface,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 38.h),
+                // Back Button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 1,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        'wizard_diet_type.subtitle'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 34.h),
-                      ...List.generate(diets.length, (i) {
-                        final isSelected = selectedDiet == i;
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 18.h),
-                          child: GestureDetector(
-                            onTap: () async {
-                              HapticFeedback.lightImpact();
-                              provider.selectDiet(i);
-                              await provider.saveAllWizardData();
-                            },
-                            child: Container(
-                              height: 66.h,
-                              decoration: BoxDecoration(
-                                color: colorScheme.surface,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? colorScheme.primary
-                                      : colorScheme.outline,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(16.r),
-                                boxShadow: [
-                                  if (isSelected)
-                                    BoxShadow(
-                                      color: colorScheme.primary.withValues(alpha: 0.06),
-                                      blurRadius: 8,
-                                      spreadRadius: 1,
-                                    ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: 18.w),
-                                  WizardIcon(
-                                    assetPath: diets[i]['icon']!,
-                                    size: 30,
-                                  ),
-                                  SizedBox(width: 22.w),
-                                  Text(
-                                    diets[i]['label']!,
-                                    style: AppTextStyles.bodyLarge.copyWith(
-                                      color: colorScheme.onSurface,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 19.sp,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Container(
-                                    margin: isRtl
-                                        ? EdgeInsets.only(left: 16.w)
-                                        : EdgeInsets.only(right: 16.w),
-                                    width: 28.w,
-                                    height: 28.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? colorScheme.primary
-                                            : colorScheme.outline,
-                                        width: 2,
-                                      ),
-                                      color: isSelected
-                                          ? colorScheme.primary
-                                          : colorScheme.surface,
-                                    ),
-                                    child: isSelected
-                                        ? Center(
-                                            child: Container(
-                                              width: 13.w,
-                                              height: 13.w,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: colorScheme.onPrimary,
-                                              ),
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                      onPressed: () {
+                        // Navigate back using the wizard provider
+                        Provider.of<WizardProvider>(context, listen: false).prevPage();
+                      },
+                    ),
                   ),
                 ),
-              ),
+                // App Title
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Text(
+                    'wizard_hear_about_us.app_title'.tr(),
+                    style: TextStyle(
+                      fontFamily: 'RusticRoadway',
+                      color: colorScheme.primary,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 120.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: Constants.beforeIcon),
+                          Text(
+                            'wizard_diet_type.title'.tr(),
+                            style: AppTextStyles.headingLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: kTitleTextStyle.fontSize,
+                              color: colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            'wizard_diet_type.subtitle'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 34.h),
+                          ...List.generate(diets.length, (i) {
+                            final isSelected = selectedDiet == i;
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 18.h),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  HapticFeedback.lightImpact();
+                                  provider.selectDiet(i);
+                                  await provider.saveAllWizardData();
+                                },
+                                child: Container(
+                                  height: 66.h,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? colorScheme.primary
+                                          : colorScheme.outline,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      if (isSelected)
+                                        BoxShadow(
+                                          color: colorScheme.primary.withValues(alpha: 0.06),
+                                          blurRadius: 8,
+                                          spreadRadius: 1,
+                                        ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(width: 18.w),
+                                      WizardIcon(
+                                        assetPath: diets[i]['icon']!,
+                                        size: 30,
+                                      ),
+                                      SizedBox(width: 22.w),
+                                      Text(
+                                        diets[i]['label']!,
+                                        style: AppTextStyles.bodyLarge.copyWith(
+                                          color: colorScheme.onSurface,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 19.sp,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Container(
+                                        margin: isRtl
+                                            ? EdgeInsets.only(left: 16.w)
+                                            : EdgeInsets.only(right: 16.w),
+                                        width: 28.w,
+                                        height: 28.w,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? colorScheme.primary
+                                                : colorScheme.outline,
+                                            width: 2,
+                                          ),
+                                          color: isSelected
+                                              ? colorScheme.primary
+                                              : colorScheme.surface,
+                                        ),
+                                        child: isSelected
+                                            ? Center(
+                                                child: Container(
+                                                  width: 13.w,
+                                                  height: 13.w,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

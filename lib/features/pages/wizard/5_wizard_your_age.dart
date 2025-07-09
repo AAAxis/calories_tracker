@@ -23,102 +23,132 @@ class WizardYourAge extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            SizedBox(height: 38.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
-                'wizard_hear_about_us.app_title'.tr(),
-                style: TextStyle(
-                  fontFamily: 'RusticRoadway',
-                  color: colorScheme.primary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 120.h),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: Constants.beforeIcon),
-                      Text(
-                        'wizard_age.title'.tr(),
-                        style: AppTextStyles.headingLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 38.h),
+                // Back Button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 1,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        'wizard_age.subtitle'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 36.h),
-                      SizedBox(
-                        height: 300.h,
-                        child: ListWheelScrollView.useDelegate(
-                          controller: controller,
-                          itemExtent: 100.h,
-                          diameterRatio: 1.15,
-                          perspective: 0.004,
-                          physics: const FixedExtentScrollPhysics(),
-                          onSelectedItemChanged: (index) async {
-                            provider.setAge(index + 10);
-                            await provider.saveAllWizardData();
-                          },
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            childCount: 70,
-                            builder: (context, i) {
-                              final age = i + 10;
-                              final isSelected = age == provider.age;
-                              return Center(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 24.w, vertical: 7.h),
-                                  decoration: isSelected
-                                      ? BoxDecoration(
-                                          color:
-                                              colorScheme.primary.withValues(alpha: 0.66),
-                                          borderRadius: BorderRadius.circular(16),
-                                        )
-                                      : null,
-                                  child: Text(
-                                    '$age',
-                                    style: AppTextStyles.headingLarge.copyWith(
-                                      color: isSelected
-                                          ? colorScheme.onPrimary
-                                          : colorScheme.onSurface.withValues(alpha: 0.5),
-                                      fontSize: isSelected ? 60.sp : 48.sp,
-                                      fontWeight:
-                                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                      onPressed: () {
+                        // Navigate back using the wizard provider
+                        Provider.of<WizardProvider>(context, listen: false).prevPage();
+                      },
+                    ),
                   ),
                 ),
-              ),
+                // App Title
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Text(
+                    'wizard_hear_about_us.app_title'.tr(),
+                    style: TextStyle(
+                      fontFamily: 'RusticRoadway',
+                      color: colorScheme.primary,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 120.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: Constants.beforeIcon),
+                          Text(
+                            'wizard_age.title'.tr(),
+                            style: AppTextStyles.headingLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            'wizard_age.subtitle'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 36.h),
+                          SizedBox(
+                            height: 300.h,
+                            child: ListWheelScrollView.useDelegate(
+                              controller: controller,
+                              itemExtent: 100.h,
+                              diameterRatio: 1.15,
+                              perspective: 0.004,
+                              physics: const FixedExtentScrollPhysics(),
+                              onSelectedItemChanged: (index) async {
+                                provider.setAge(index + 10);
+                                await provider.saveAllWizardData();
+                              },
+                              childDelegate: ListWheelChildBuilderDelegate(
+                                childCount: 70,
+                                builder: (context, i) {
+                                  final age = i + 10;
+                                  final isSelected = age == provider.age;
+                                  return Center(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24.w, vertical: 7.h),
+                                      decoration: isSelected
+                                          ? BoxDecoration(
+                                              color:
+                                                  colorScheme.primary.withValues(alpha: 0.66),
+                                              borderRadius: BorderRadius.circular(16),
+                                            )
+                                          : null,
+                                      child: Text(
+                                        '$age',
+                                        style: AppTextStyles.headingLarge.copyWith(
+                                          color: isSelected
+                                              ? colorScheme.onPrimary
+                                              : colorScheme.onSurface.withValues(alpha: 0.5),
+                                          fontSize: isSelected ? 60.sp : 48.sp,
+                                          fontWeight:
+                                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

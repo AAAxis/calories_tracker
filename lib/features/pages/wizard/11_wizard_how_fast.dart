@@ -53,158 +53,188 @@ class WizardHowFast extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            SizedBox(height: 38.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
-                'wizard_hear_about_us.app_title'.tr(),
-                style: TextStyle(
-                  fontFamily: 'RusticRoadway',
-                  color: colorScheme.primary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 38.h),
+                // Back Button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                      onPressed: () {
+                        // Navigate back using the wizard provider
+                        Provider.of<WizardProvider>(context, listen: false).prevPage();
+                      },
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 120.h),
-                child: Padding(
+                // App Title
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: Constants.beforeIcon),
-                      Text(
-                        'wizard_how_fast.title'.tr(),
-                        style: AppTextStyles.headingLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: kTitleTextStyle.fontSize,
-                          color: colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        'wizard_how_fast.subtitle'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 50.h),
-                      Text(
-                        "${current.toStringAsFixed(1)} ${'wizard_how_fast.kg_per_week'.tr()}",
-                        style: AppTextStyles.headingLarge.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                        ),
-                      ),
-                      SizedBox(height: 50.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Text(
+                    'wizard_hear_about_us.app_title'.tr(),
+                    style: TextStyle(
+                      fontFamily: 'RusticRoadway',
+                      color: colorScheme.primary,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 120.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _SpeedAnimalItem(
-                            activeAsset: AppAnimations.rabbit_g,
-                            inactiveAsset: AppIcons.rabbit_b,
-                            active: active == 0,
+                          SizedBox(height: Constants.beforeIcon),
+                          Text(
+                            'wizard_how_fast.title'.tr(),
+                            style: AppTextStyles.headingLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: kTitleTextStyle.fontSize,
+                              color: colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          _SpeedAnimalItem(
-                            activeAsset: AppAnimations.horse_g,
-                            inactiveAsset: AppIcons.horse_b,
-                            active: active == 1,
+                          SizedBox(height: 10.h),
+                          Text(
+                            'wizard_how_fast.subtitle'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          _SpeedAnimalItem(
-                            activeAsset: AppAnimations.tiger_g,
-                            inactiveAsset: AppIcons.tiger_b,
-                            active: active == 2,
+                          SizedBox(height: 50.h),
+                          Text(
+                            "${current.toStringAsFixed(1)} ${'wizard_how_fast.kg_per_week'.tr()}",
+                            style: AppTextStyles.headingLarge.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
+                          ),
+                          SizedBox(height: 50.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.rabbit_g,
+                                inactiveAsset: AppIcons.rabbit_b,
+                                active: active == 0,
+                              ),
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.horse_g,
+                                inactiveAsset: AppIcons.horse_b,
+                                active: active == 1,
+                              ),
+                              _SpeedAnimalItem(
+                                activeAsset: AppAnimations.tiger_g,
+                                inactiveAsset: AppIcons.tiger_b,
+                                active: active == 2,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 0.h),
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              trackHeight: 4,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                              activeTrackColor: Colors.black,
+                              inactiveTrackColor: Colors.black26,
+                              thumbColor: Colors.black,
+                            ),
+                            child: Slider(
+                              value: current,
+                              min: steps.first,
+                              max: steps.last,
+                              divisions: 14,
+                              onChanged: (value) async {
+                                HapticFeedback.lightImpact();
+                                provider.setGoalSpeed(value);
+                                await provider.saveAllWizardData();
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'wizard_how_fast.slow'.tr(),
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      fontSize: 10.sp,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'wizard_how_fast.medium'.tr(),
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      fontSize: 10.sp,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'wizard_how_fast.fast'.tr(),
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      fontSize: 10.sp,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 50.h),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 18.w),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Text(
+                              getAdvice(),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: colorScheme.onSurface,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0.h),
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 4,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-                          activeTrackColor: Colors.black,
-                          inactiveTrackColor: Colors.black26,
-                          thumbColor: Colors.black,
-                        ),
-                        child: Slider(
-                          value: current,
-                          min: steps.first,
-                          max: steps.last,
-                          divisions: 14,
-                          onChanged: (value) async {
-                            HapticFeedback.lightImpact();
-                            provider.setGoalSpeed(value);
-                            await provider.saveAllWizardData();
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'wizard_how_fast.slow'.tr(),
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  fontSize: 10.sp,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                'wizard_how_fast.medium'.tr(),
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  fontSize: 10.sp,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                'wizard_how_fast.fast'.tr(),
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  fontSize: 10.sp,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 50.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 18.w),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Text(
-                          getAdvice(),
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: colorScheme.onSurface,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

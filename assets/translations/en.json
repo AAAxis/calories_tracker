@@ -811,13 +811,14 @@
     "continue": "Continue"
   },
   "wizard_referral": {
-    "title": "Enter referral code ",
+    "title": "Enter code ",
     "subtitle": "You can skip this step",
     "enter_code": "Enter referral code",
     "submit": "Submit",
     "continue": "Continue",
     "invalid_code": "Please enter a valid 6-digit code",
-    "applied": "Referral Code Applied!"
+    "applied": "Promo Code Applied!",
+    "promo_code": "Promo Code"
   },
   "login": {
     "continue_with_apple": "Continue with Apple",

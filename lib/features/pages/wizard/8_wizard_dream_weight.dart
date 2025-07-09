@@ -32,163 +32,193 @@ class WizardDreamWeight extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            SizedBox(height: 38.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
-                'wizard_hear_about_us.app_title'.tr(),
-                style: TextStyle(
-                  fontFamily: 'RusticRoadway',
-                  color: colorScheme.primary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 38.h),
+                // Back Button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                      onPressed: () {
+                        // Navigate back using the wizard provider
+                        Provider.of<WizardProvider>(context, listen: false).prevPage();
+                      },
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 120.h),
-                child: Padding(
+                // App Title
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    children: [
-                      SizedBox(height: Constants.beforeIcon),
-                      Text(
-                        'wizard_dream_weight.title'.tr(),
-                        style: AppTextStyles.headingMedium.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                          fontSize: kTitleTextStyle.fontSize,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        'wizard_dream_weight.subtitle'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  child: Text(
+                    'wizard_hear_about_us.app_title'.tr(),
+                    style: TextStyle(
+                      fontFamily: 'RusticRoadway',
+                      color: colorScheme.primary,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 120.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
                         children: [
-                          _UnitToggleButton(
-                            label: 'wizard_dream_weight.lbs'.tr(),
-                            isActive: !isKg,
-                            onTap: () async {
-                              HapticFeedback.lightImpact();
-                              provider.toggleUnit(false);
-                              await provider.saveAllWizardData();
-                            },
+                          SizedBox(height: Constants.beforeIcon),
+                          Text(
+                            'wizard_dream_weight.title'.tr(),
+                            style: AppTextStyles.headingMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                              fontSize: kTitleTextStyle.fontSize,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(width: 18.w),
-                          _UnitToggleButton(
-                            label: 'wizard_dream_weight.kgs'.tr(),
-                            isActive: isKg,
-                            onTap: () async {
-                              HapticFeedback.lightImpact();
-                              provider.toggleUnit(true);
-                              await provider.saveAllWizardData();
-                            },
+                          SizedBox(height: 10.h),
+                          Text(
+                            'wizard_dream_weight.subtitle'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 30.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _UnitToggleButton(
+                                label: 'wizard_dream_weight.lbs'.tr(),
+                                isActive: !isKg,
+                                onTap: () async {
+                                  HapticFeedback.lightImpact();
+                                  provider.toggleUnit(false);
+                                  await provider.saveAllWizardData();
+                                },
+                              ),
+                              SizedBox(width: 18.w),
+                              _UnitToggleButton(
+                                label: 'wizard_dream_weight.kgs'.tr(),
+                                isActive: isKg,
+                                onTap: () async {
+                                  HapticFeedback.lightImpact();
+                                  provider.toggleUnit(true);
+                                  await provider.saveAllWizardData();
+                                },
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 80.h),
+                          Text(
+                            '${weight.toStringAsFixed(1)} ${isKg ? 'wizard_dream_weight.kg'.tr() : 'wizard_dream_weight.lb'.tr()}',
+                            style: AppTextStyles.headingLarge.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 40.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 10.h),
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          SizedBox(
+                            height: 100.h,
+                            child: RotatedBox(
+                              quarterTurns: -1,
+                              child: ListWheelScrollView.useDelegate(
+                                controller: provider.scrollController,
+                                itemExtent: itemExtent,
+                                physics: const FixedExtentScrollPhysics(),
+                                onSelectedItemChanged: (index) async {
+                                  final value = min + (index * step);
+                                  provider.setTargetWeight(value);
+                                  await provider.saveAllWizardData();
+                                },
+                                childDelegate: ListWheelChildBuilderDelegate(
+                                  childCount: itemCount,
+                                  builder: (context, idx) {
+                                    final value = min + idx * step;
+                                    final isSelected = (value.toStringAsFixed(1) ==
+                                        weight.toStringAsFixed(1));
+                                    final isWholeUnit = (value * 10) % 10 == 0;
+
+                                    double height;
+                                    if (isSelected) {
+                                      height = 55.h; // tallest line
+                                    } else if (isWholeUnit) {
+                                      height = 40.h; // medium line
+                                    } else {
+                                      height = 25.h; // short line
+                                    }
+
+                                    return RotatedBox(
+                                      quarterTurns: 1,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: isSelected ? 3.5.w : 2.w,
+                                            height: height,
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? colorScheme.onSurface
+                                                  : colorScheme.onSurface
+                                                      .withValues(alpha: 0.4),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                          if (isWholeUnit)
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 4.h),
+                                              child: FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: Text(
+                                                  value.toStringAsFixed(0),
+                                                  style: AppTextStyles.bodyLarge.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorScheme.onSurface,
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 80.h),
-                      Text(
-                        '${weight.toStringAsFixed(1)} ${isKg ? 'wizard_dream_weight.kg'.tr() : 'wizard_dream_weight.lb'.tr()}',
-                        style: AppTextStyles.headingLarge.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 40.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      SizedBox(
-                        height: 100.h,
-                        child: RotatedBox(
-                          quarterTurns: -1,
-                          child: ListWheelScrollView.useDelegate(
-                            controller: provider.scrollController,
-                            itemExtent: itemExtent,
-                            physics: const FixedExtentScrollPhysics(),
-                            onSelectedItemChanged: (index) async {
-                              final value = min + (index * step);
-                              provider.setTargetWeight(value);
-                              await provider.saveAllWizardData();
-                            },
-                            childDelegate: ListWheelChildBuilderDelegate(
-                              childCount: itemCount,
-                              builder: (context, idx) {
-                                final value = min + idx * step;
-                                final isSelected = (value.toStringAsFixed(1) ==
-                                    weight.toStringAsFixed(1));
-                                final isWholeUnit = (value * 10) % 10 == 0;
-
-                                double height;
-                                if (isSelected) {
-                                  height = 55.h; // tallest line
-                                } else if (isWholeUnit) {
-                                  height = 40.h; // medium line
-                                } else {
-                                  height = 25.h; // short line
-                                }
-
-                                return RotatedBox(
-                                  quarterTurns: 1,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: isSelected ? 3.5.w : 2.w,
-                                        height: height,
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? colorScheme.onSurface
-                                              : colorScheme.onSurface
-                                                  .withValues(alpha: 0.4),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                      if (isWholeUnit)
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 4.h),
-                                          child: FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              value.toStringAsFixed(0),
-                                              style: AppTextStyles.bodyLarge.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                color: colorScheme.onSurface,
-                                                fontSize: 16.sp,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

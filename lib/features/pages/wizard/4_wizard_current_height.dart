@@ -53,177 +53,207 @@ class WizardCurrentHeight extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        body: Stack(
           children: [
-            SizedBox(height: 38.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Text(
-                'wizard_hear_about_us.app_title'.tr(),
-                style: TextStyle(
-                  fontFamily: 'RusticRoadway',
-                  color: colorScheme.primary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 38.h),
+                // Back Button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 8.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.surface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                      onPressed: () {
+                        // Navigate back using the wizard provider
+                        Provider.of<WizardProvider>(context, listen: false).prevPage();
+                      },
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 120.h),
-                child: Padding(
+                // App Title
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: Constants.beforeIcon),
-                      Text(
-                        "wizard_height.title".tr(),
-                        style: AppTextStyles.headingMedium.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                          fontSize: kTitleTextStyle.fontSize,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        'wizard_height.subtitle'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 22.h),
-                      Row(
+                  child: Text(
+                    'wizard_hear_about_us.app_title'.tr(),
+                    style: TextStyle(
+                      fontFamily: 'RusticRoadway',
+                      color: colorScheme.primary,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 120.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _UnitToggleButton(
-                            label: "wizard_height.inches".tr(),
-                            isActive: !isMetric,
-                            onTap: () async {
-                              HapticFeedback.lightImpact();
-                              if (isMetric) {
-                                final heightInInches = (height * 0.393701).round();
-                                final clampedHeight = heightInInches.clamp(minInch, maxInch);
-                                provider.setHeight(clampedHeight);
-                              }
-                              provider.toggleMetric(false);
-                              await provider.saveAllWizardData();
-                            },
+                          SizedBox(height: Constants.beforeIcon),
+                          Text(
+                            "wizard_height.title".tr(),
+                            style: AppTextStyles.headingMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                              fontSize: kTitleTextStyle.fontSize,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(width: 18.w),
-                          _UnitToggleButton(
-                            label: "wizard_height.cm".tr(),
-                            isActive: isMetric,
-                            onTap: () async {
-                              HapticFeedback.lightImpact();
-                              if (!isMetric) {
-                                final heightInCm = (height * 2.54).round();
-                                final clampedHeight = heightInCm.clamp(minCm, maxCm);
-                                provider.setHeight(clampedHeight);
-                              }
-                              provider.toggleMetric(true);
-                              await provider.saveAllWizardData();
-                            },
+                          SizedBox(height: 10.h),
+                          Text(
+                            'wizard_height.subtitle'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 22.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _UnitToggleButton(
+                                label: "wizard_height.inches".tr(),
+                                isActive: !isMetric,
+                                onTap: () async {
+                                  HapticFeedback.lightImpact();
+                                  if (isMetric) {
+                                    final heightInInches = (height * 0.393701).round();
+                                    final clampedHeight = heightInInches.clamp(minInch, maxInch);
+                                    provider.setHeight(clampedHeight);
+                                  }
+                                  provider.toggleMetric(false);
+                                  await provider.saveAllWizardData();
+                                },
+                              ),
+                              SizedBox(width: 18.w),
+                              _UnitToggleButton(
+                                label: "wizard_height.cm".tr(),
+                                isActive: isMetric,
+                                onTap: () async {
+                                  HapticFeedback.lightImpact();
+                                  if (!isMetric) {
+                                    final heightInCm = (height * 2.54).round();
+                                    final clampedHeight = heightInCm.clamp(minCm, maxCm);
+                                    provider.setHeight(clampedHeight);
+                                  }
+                                  provider.toggleMetric(true);
+                                  await provider.saveAllWizardData();
+                                },
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 18.h),
+                          SizedBox(
+                            height: 300.h,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ListWheelScrollView.useDelegate(
+                                  itemExtent: 50.h,
+                                  diameterRatio: 1.5,
+                                  physics: const FixedExtentScrollPhysics(),
+                                  controller: controller,
+                                  onSelectedItemChanged: (i) async {
+                                    final selectedHeight = min + i;
+                                    provider.setHeight(selectedHeight);
+                                    await provider.saveAllWizardData();
+                                  },
+                                  childDelegate: ListWheelChildBuilderDelegate(
+                                    childCount: count,
+                                    builder: (context, i) {
+                                      final value = min + i;
+                                      final isSelected = value == height;
+                                      return Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          if (isSelected)
+                                            Container(
+                                              margin: EdgeInsets.only(top: 18.sp),
+                                              child: Transform.rotate(
+                                                angle: isRtl ? math.pi : 0,
+                                              ),
+                                            ),
+                                          SizedBox(width: isSelected ? 8.w : 40.w),
+                                          Text(
+                                            isMetric ? "$value" : "$value",
+                                            style: AppTextStyles.headingLarge.copyWith(
+                                              fontWeight: isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                              color: isSelected
+                                                  ? colorScheme.onSurface
+                                                  : colorScheme.onSurface.withAlpha(90),
+                                              fontSize: isSelected ? 42.sp : 22.sp,
+                                            ),
+                                          ),
+                                          if (isSelected)
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 6.w,top: 5.w,right: 10.w),
+                                              child: Text(
+                                                isMetric ? "wizard_height.cm".tr() : "wizard_height.inches".tr(),
+                                                style: AppTextStyles.headingMedium.copyWith(
+                                                  color: colorScheme.onSurface,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: isSelected ? 30.sp : 22.sp,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10.h),
+                                        height: 2,
+                                        width: 200.w,
+                                        color: colorScheme.onSurface.withAlpha(50),
+                                      ),
+                                      SizedBox(height: 68.h),
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 0.h),
+                                        height: 2,
+                                        width: 200.w,
+                                        color: colorScheme.onSurface.withAlpha(50),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 18.h),
-                      SizedBox(
-                        height: 300.h,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            ListWheelScrollView.useDelegate(
-                              itemExtent: 50.h,
-                              diameterRatio: 1.5,
-                              physics: const FixedExtentScrollPhysics(),
-                              controller: controller,
-                              onSelectedItemChanged: (i) async {
-                                final selectedHeight = min + i;
-                                provider.setHeight(selectedHeight);
-                                await provider.saveAllWizardData();
-                              },
-                              childDelegate: ListWheelChildBuilderDelegate(
-                                childCount: count,
-                                builder: (context, i) {
-                                  final value = min + i;
-                                  final isSelected = value == height;
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      if (isSelected)
-                                        Container(
-                                          margin: EdgeInsets.only(top: 18.sp),
-                                          child: Transform.rotate(
-                                            angle: isRtl ? math.pi : 0,
-                                          ),
-                                        ),
-                                      SizedBox(width: isSelected ? 8.w : 40.w),
-                                      Text(
-                                        isMetric ? "$value" : "$value",
-                                        style: AppTextStyles.headingLarge.copyWith(
-                                          fontWeight: isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                          color: isSelected
-                                              ? colorScheme.onSurface
-                                              : colorScheme.onSurface.withAlpha(90),
-                                          fontSize: isSelected ? 42.sp : 22.sp,
-                                        ),
-                                      ),
-                                      if (isSelected)
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 6.w,top: 5.w,right: 10.w),
-                                          child: Text(
-                                            isMetric ? "wizard_height.cm".tr() : "wizard_height.inches".tr(),
-                                            style: AppTextStyles.headingMedium.copyWith(
-                                              color: colorScheme.onSurface,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: isSelected ? 30.sp : 22.sp,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10.h),
-                                    height: 2,
-                                    width: 200.w,
-                                    color: colorScheme.onSurface.withAlpha(50),
-                                  ),
-                                  SizedBox(height: 68.h),
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 0.h),
-                                    height: 2,
-                                    width: 200.w,
-                                    color: colorScheme.onSurface.withAlpha(50),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
