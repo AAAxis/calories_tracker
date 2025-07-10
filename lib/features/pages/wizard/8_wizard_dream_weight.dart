@@ -62,6 +62,7 @@ class WizardDreamWeight extends StatelessWidget {
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
                             // Navigate back using the wizard provider
+                            AppHaptics.back_vibrate();
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
                         ),
@@ -237,7 +238,7 @@ class WizardDreamWeight extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_dream_weight.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             provider.nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

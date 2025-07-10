@@ -132,7 +132,7 @@ class WizardHearAboutUs extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_hear_about_us.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           isEnabled: selectedSocialMedia != null,

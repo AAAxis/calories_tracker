@@ -136,7 +136,7 @@ class Wizard16 extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_upload_image.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             // Your action here
             Provider.of<WizardProvider>(context, listen: false)
                 .nextPage();

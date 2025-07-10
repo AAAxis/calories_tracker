@@ -84,7 +84,7 @@ class WizardAccountSummary extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_account_summary.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             // Your action here
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },

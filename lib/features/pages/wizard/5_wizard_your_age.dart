@@ -54,7 +54,7 @@ class WizardYourAge extends StatelessWidget {
                         child: IconButton(
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
-                            AppHaptics.vibrate();
+                            AppHaptics.back_vibrate();
                             // Navigate back using the wizard provider
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
@@ -170,7 +170,7 @@ class WizardYourAge extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_age.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

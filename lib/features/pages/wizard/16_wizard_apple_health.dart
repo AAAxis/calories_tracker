@@ -205,7 +205,7 @@ class _WizardAppleHealthState extends State<WizardAppleHealth> {
         child: WizardButton(
           label: 'wizard_apple_health.done'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             _navigateToNotifications(context);
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

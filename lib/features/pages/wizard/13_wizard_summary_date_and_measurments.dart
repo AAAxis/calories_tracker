@@ -514,6 +514,7 @@ class _WizardSummaryDateAndMeasurmentsState extends State<WizardSummaryDateAndMe
         child: WizardButton(
           label: 'wizard_summary.continue'.tr(),
           onPressed: () {
+            AppHaptics.continue_vibrate();
             Navigator.of(context).push(
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) => const WizardReferal(),

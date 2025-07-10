@@ -202,7 +202,7 @@ class _WizardGoogleFitState extends State<WizardGoogleFit> {
           onPressed: _isConnecting 
             ? () {} // Empty function when connecting
             : () {
-                AppHaptics.vibrate();
+                 AppHaptics.continue_vibrate();
                 _navigateToNotifications(context);
               },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

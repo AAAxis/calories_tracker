@@ -218,7 +218,7 @@ class _WizardReferalState extends State<WizardReferal> {
           label: 'wizard_referral.continue'.tr(),
           isEnabled: true, // Explicitly enable the button
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             print("Continue button pressed - navigating to next screen");
 
             // Since this screen is navigated to via Navigator.push(),

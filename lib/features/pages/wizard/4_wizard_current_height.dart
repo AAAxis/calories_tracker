@@ -82,6 +82,7 @@ class WizardCurrentHeight extends StatelessWidget {
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
                             // Navigate back using the wizard provider
+                            AppHaptics.back_vibrate();
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
                         ),
@@ -270,7 +271,7 @@ class WizardCurrentHeight extends StatelessWidget {
           child: WizardButton(
             label: 'wizard_height.continue'.tr(),
             onPressed: () {
-              AppHaptics.vibrate();
+              AppHaptics.continue_vibrate();
               Provider.of<WizardProvider>(context, listen: false).nextPage();
             },
             isEnabled: height > 0,

@@ -311,7 +311,7 @@ class _WizardNotificationState extends State<WizardNotification> {
         child: WizardButton(
           label: 'wizard_notification.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             _navigateToComments();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

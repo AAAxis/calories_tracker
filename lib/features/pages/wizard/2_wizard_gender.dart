@@ -74,8 +74,9 @@ class WizardGender extends StatelessWidget {
                         child: IconButton(
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
-                            AppHaptics.vibrate();
+                            AppHaptics.back_vibrate();
                             // Navigate back using the wizard provider
+                            AppHaptics.back_vibrate();
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
                         ),
@@ -230,7 +231,7 @@ class WizardGender extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_gender.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           isEnabled: selectedGender != null,

@@ -253,7 +253,7 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
         child: WizardButton(
           label: 'wizard_great_potential.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             _navigateToHealthScreen(context);
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

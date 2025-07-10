@@ -147,7 +147,7 @@ class _WizardRecommendationAppState extends State<WizardRecommendationApp> {
         child: WizardButton(
           label: 'wizard_recommendation.create_account'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             // Mark wizard as completed
             SharedPref.setWizardCompleted(true);
             _navigateToAuth();

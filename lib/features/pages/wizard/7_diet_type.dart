@@ -76,6 +76,7 @@ class WizardDietType extends StatelessWidget {
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
                             // Navigate back using the wizard provider
+                            AppHaptics.back_vibrate();
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
                         ),
@@ -229,7 +230,7 @@ class WizardDietType extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_diet_type.continue'.tr(),
           onPressed: () {
-            AppHaptics.vibrate();
+            AppHaptics.continue_vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           isEnabled: selectedDiet != null,

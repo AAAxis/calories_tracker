@@ -306,7 +306,7 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
       //       AppHaptics.vibrate();
       //       _navigateToResults();
       //     },
-      //     padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
+      //     padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.wb),
       //   ),
       // ),
     );
