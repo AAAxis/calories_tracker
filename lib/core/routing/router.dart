@@ -165,7 +165,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.wizard8,
         name: 'wizard8',
-        builder: (context, state) => const WizardMotivationAchiement(),
+        builder: (context, state) => const WizardMotivationAchiement(isGain: false,),
       ),
       GoRoute(
         path: AppRoutes.wizard9,

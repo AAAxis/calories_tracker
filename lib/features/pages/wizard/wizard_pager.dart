@@ -38,7 +38,7 @@ class WizardPager extends StatelessWidget {
       const WizardGoalType(),
       const WizardDietType(),
       const WizardDreamWeight(),
-      const WizardMotivationAchiement(),
+      const WizardMotivationAchiement(isGain: false,),
       const WizardWorkout(),
       const WizardHowFast(),
       const WizardLoadingPage(),

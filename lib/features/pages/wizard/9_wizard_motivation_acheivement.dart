@@ -5,57 +5,48 @@ import '../../../core/constants/app_animations.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/custom_widgets/wizard_button.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/haptics.dart';
 import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_icons.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
-import '../../../core/utils/haptics.dart';
-
-// Constants
-const TextStyle kTitleTextStyle = TextStyle(
-  fontSize: 24,
-  fontWeight: FontWeight.bold,
-);
 
 class WizardMotivationAchiement extends StatelessWidget {
-  const WizardMotivationAchiement({super.key});
+  final bool isGain;
+
+  const WizardMotivationAchiement({
+    super.key,
+    required this.isGain,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _calculateWeightDifferenceAndIsGain(),
+    return FutureBuilder<double>(
+      future: _calculateWeightDifference(),
       builder: (context, snapshot) {
-        final weightDifference = snapshot.data?['weightDifference'] ?? 0.0;
-        final isGain = snapshot.data?['isGain'] ?? false;
-        return _buildContent(context, colorScheme, weightDifference, isGain);
+        final weightDifference = snapshot.data ?? 0.0;
+
+        return _buildContent(context, colorScheme, weightDifference);
       },
     );
   }
 
-  Future<Map<String, dynamic>> _calculateWeightDifferenceAndIsGain() async {
+  Future<double> _calculateWeightDifference() async {
     final prefs = await SharedPreferences.getInstance();
     final currentWeight = prefs.getDouble('wizard_weight') ?? 70.0;
     final targetWeight = prefs.getDouble('wizard_target_weight') ?? 65.0;
-    final diff = targetWeight - currentWeight;
-    return {
-      'weightDifference': diff.abs(),
-      'isGain': diff > 0,
-    };
+    return (targetWeight - currentWeight).abs();
   }
 
-  Widget _buildContent(BuildContext context, ColorScheme colorScheme, double weightDifference, bool isGain) {
+  Widget _buildContent(BuildContext context, ColorScheme colorScheme, double weightDifference) {
     final isRtl = Localizations.localeOf(context).languageCode == 'he';
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Stack(
           children: [
-
-            /// Main Content
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -109,91 +100,87 @@ class WizardMotivationAchiement extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.only(bottom: 120.h),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(height: Constants.beforeIcon),
-                          SizedBox(height: 200.h), // Fixed spacing instead of Spacer
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Background images (larger and positioned over text)
-                              Positioned(
-                                left: -30.w,
-                                child: Image.asset(
-                                  AppAnimations.goal,
-                                  width: 120.w,
-                                  height: 120.h,
-                                  fit: BoxFit.contain,
-                                  gaplessPlayback: true,
-                                ),
-                              ),
-                              Positioned(
-                                right: -30.w,
-                                child: Transform(
-                                  alignment: Alignment.center,
-                                  transform: Matrix4.rotationY(3.14159),
-                                  child: Image.asset(
-                                    AppAnimations.goal,
-                                    width: 120.w,
-                                    height: 120.h,
-                                    fit: BoxFit.contain,
-                                    gaplessPlayback: true,
-                                  ),
-                                ),
-                              ),
-                              // Text content (centered and overlaid)
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 40.w),
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: isGain ? 'wizard_motivation_achievement.gaining'.tr() : 'wizard_motivation_achievement.losing'.tr(),
-                                        style: AppTextStyles.headingMedium.copyWith(
-                                          color: colorScheme.onSurface,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: kTitleTextStyle.fontSize,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "${weightDifference.toStringAsFixed(1)} ${'wizard_motivation_achievement.kg'.tr()}",
-                                        style: AppTextStyles.headingMedium.copyWith(
-                                          color: Colors.orange[700],
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: kTitleTextStyle.fontSize,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: isGain
-                                            ? 'wizard_motivation_achievement.gain_message'.tr()
-                                            : 'wizard_motivation_achievement.lose_message'.tr(),
-                                        style: AppTextStyles.headingMedium.copyWith(
-                                          color: colorScheme.onSurface,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: kTitleTextStyle.fontSize,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
+                  child: Stack(
+                    children: [
+                      /// Left-side party popper GIF
+                      Positioned(
+                        left: -10.w,
+                        top: 200.h,
+                        child: RepaintBoundary(
+                          child: Image.asset(
+                            AppAnimations.goal,
+                            width: 250.w,
+                            fit: BoxFit.contain,
+                            gaplessPlayback: true,
                           ),
-                          SizedBox(height: 100.h), // Fixed spacing instead of Spacer
-                        ],
+                        ),
                       ),
-                    ),
+                      /// Right-side party popper GIF (mirrored)
+                      Positioned(
+                        right: -10.w,
+                        top: 200.h,
+                        child: RepaintBoundary(
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(3.14159),
+                            child: Image.asset(
+                              AppAnimations.goal,
+                              width: 250.w,
+                              fit: BoxFit.contain,
+                              gaplessPlayback: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                      /// Main Content
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Column(
+                          children: [
+                            SizedBox(height: Constants.beforeIcon),
+
+                            SizedBox(height: Constants.afterIcon),
+                            const Spacer(),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: isGain ? 'wizard_motivation_achievement.gaining'.tr() : 'wizard_motivation_achievement.losing'.tr(),
+                                    style: AppTextStyles.headingMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "${weightDifference.toStringAsFixed(1)} ${'wizard_motivation_achievement.kg'.tr()}",
+                                    style: AppTextStyles.headingMedium.copyWith(
+                                      color: Colors.orange[700],
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: isGain
+                                        ? 'wizard_motivation_achievement.gain_message'.tr()
+                                        : 'wizard_motivation_achievement.lose_message'.tr(),
+                                    style: AppTextStyles.headingMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const Spacer(),
+                            SizedBox(height: 24.h),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-
           ],
         ),
       ),
@@ -205,6 +192,7 @@ class WizardMotivationAchiement extends StatelessWidget {
             AppHaptics.continue_vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
+          isEnabled: true,
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),
       ),
