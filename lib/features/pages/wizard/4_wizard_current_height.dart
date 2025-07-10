@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'dart:math' as math;
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -143,7 +144,7 @@ class WizardCurrentHeight extends StatelessWidget {
                                 label: "wizard_height.inches".tr(),
                                 isActive: !isMetric,
                                 onTap: () async {
-                                  HapticFeedback.lightImpact();
+                                  AppHaptics.vibrate();
                                   if (isMetric) {
                                     final heightInInches = (height * 0.393701).round();
                                     final clampedHeight = heightInInches.clamp(minInch, maxInch);
@@ -158,7 +159,7 @@ class WizardCurrentHeight extends StatelessWidget {
                                 label: "wizard_height.cm".tr(),
                                 isActive: isMetric,
                                 onTap: () async {
-                                  HapticFeedback.lightImpact();
+                                  AppHaptics.vibrate();
                                   if (!isMetric) {
                                     final heightInCm = (height * 2.54).round();
                                     final clampedHeight = heightInCm.clamp(minCm, maxCm);
@@ -269,7 +270,7 @@ class WizardCurrentHeight extends StatelessWidget {
           child: WizardButton(
             label: 'wizard_height.continue'.tr(),
             onPressed: () {
-              HapticFeedback.mediumImpact();
+              AppHaptics.vibrate();
               Provider.of<WizardProvider>(context, listen: false).nextPage();
             },
             isEnabled: height > 0,

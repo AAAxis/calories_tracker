@@ -10,6 +10,7 @@ import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/custom_widgets/wizard_icon.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -148,36 +149,42 @@ class WizardHowFast extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: isRtl ? [
+
                               _SpeedAnimalItem(
-                                activeAsset: AppAnimations.tiger_g,
-                                inactiveAsset: AppIcons.tiger_b,
-                                active: active == 2,
+                                activeAsset: AppAnimations.rabbit_g,
+                                inactiveAsset: AppIcons.rabbit_b,
+                                active: active == 0,
+                                isRtl: isRtl,
                               ),
                               _SpeedAnimalItem(
                                 activeAsset: AppAnimations.horse_g,
                                 inactiveAsset: AppIcons.horse_b,
                                 active: active == 1,
-                              ),
-                              _SpeedAnimalItem(
-                                activeAsset: AppAnimations.rabbit_g,
-                                inactiveAsset: AppIcons.rabbit_b,
-                                active: active == 0,
+                                isRtl: isRtl,
+                              ),_SpeedAnimalItem(
+                                activeAsset: AppAnimations.tiger_g,
+                                inactiveAsset: AppIcons.tiger_b,
+                                active: active == 2,
+                                isRtl: isRtl,
                               ),
                             ] : [
                               _SpeedAnimalItem(
                                 activeAsset: AppAnimations.rabbit_g,
                                 inactiveAsset: AppIcons.rabbit_b,
                                 active: active == 0,
+                                isRtl: isRtl,
                               ),
                               _SpeedAnimalItem(
                                 activeAsset: AppAnimations.horse_g,
                                 inactiveAsset: AppIcons.horse_b,
                                 active: active == 1,
+                                isRtl: isRtl,
                               ),
                               _SpeedAnimalItem(
                                 activeAsset: AppAnimations.tiger_g,
                                 inactiveAsset: AppIcons.tiger_b,
                                 active: active == 2,
+                                isRtl: isRtl,
                               ),
                             ],
                           ),
@@ -197,7 +204,7 @@ class WizardHowFast extends StatelessWidget {
                               max: steps.last,
                               divisions: 14,
                               onChanged: (value) async {
-                                HapticFeedback.lightImpact();
+                                AppHaptics.vibrate();
                                 provider.setGoalSpeed(value);
                                 await provider.saveAllWizardData();
                               },
@@ -268,7 +275,7 @@ class WizardHowFast extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_how_fast.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
@@ -282,28 +289,35 @@ class _SpeedAnimalItem extends StatelessWidget {
   final String activeAsset;
   final String inactiveAsset;
   final bool active;
+  final bool isRtl;
 
   const _SpeedAnimalItem({
     required this.activeAsset,
     required this.inactiveAsset,
     required this.active,
+    required this.isRtl,
   });
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: active
-          ? Image.asset(
-        activeAsset,
-        width: 50.w,
-        height: 50.w,
-        fit: BoxFit.contain,
-        gaplessPlayback: true,
-      )
-          : WizardIcon(
-        assetPath: inactiveAsset,
-        size: 50,
-      ),
-    );
+    final Widget image = active
+        ? Image.asset(
+            activeAsset,
+            width: 50.w,
+            height: 50.w,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+          )
+        : WizardIcon(
+            assetPath: inactiveAsset,
+            size: 50,
+          );
+    return isRtl
+        ? Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159),
+            child: image,
+          )
+        : image;
   }
 }

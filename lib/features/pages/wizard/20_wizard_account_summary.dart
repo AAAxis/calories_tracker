@@ -7,6 +7,7 @@ import '../../../core/constants/app_images.dart';
 import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -83,7 +84,7 @@ class WizardAccountSummary extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_account_summary.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             // Your action here
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },

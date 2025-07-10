@@ -9,6 +9,7 @@ import 'dart:io';
 import '16_wizard_apple_health.dart';
 import '17_wizard_google_fit.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -252,7 +253,7 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
         child: WizardButton(
           label: 'wizard_great_potential.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             _navigateToHealthScreen(context);
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

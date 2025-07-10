@@ -11,6 +11,7 @@ import 'dart:io';
 import '16_wizard_apple_health.dart';
 import '17_wizard_google_fit.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -217,7 +218,7 @@ class _WizardReferalState extends State<WizardReferal> {
           label: 'wizard_referral.continue'.tr(),
           isEnabled: true, // Explicitly enable the button
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             print("Continue button pressed - navigating to next screen");
 
             // Since this screen is navigated to via Navigator.push(),

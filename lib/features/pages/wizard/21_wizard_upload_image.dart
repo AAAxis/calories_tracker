@@ -6,6 +6,7 @@ import '../../../core/custom_widgets/wizard_button.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -135,7 +136,7 @@ class Wizard16 extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_upload_image.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             // Your action here
             Provider.of<WizardProvider>(context, listen: false)
                 .nextPage();

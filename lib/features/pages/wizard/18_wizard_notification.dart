@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '19_wizard_recommendation.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -310,7 +311,7 @@ class _WizardNotificationState extends State<WizardNotification> {
         child: WizardButton(
           label: 'wizard_notification.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             _navigateToComments();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

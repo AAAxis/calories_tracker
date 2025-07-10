@@ -8,6 +8,7 @@ import '../../../core/services/health_service.dart';
 import '18_wizard_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -201,7 +202,7 @@ class _WizardGoogleFitState extends State<WizardGoogleFit> {
           onPressed: _isConnecting 
             ? () {} // Empty function when connecting
             : () {
-                HapticFeedback.mediumImpact();
+                AppHaptics.vibrate();
                 _navigateToNotifications(context);
               },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

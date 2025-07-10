@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/custom_widgets/wizard_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -302,7 +303,7 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
       //   child: WizardButton(
       //     label: 'wizard_loading_page.continue'.tr(),
       //     onPressed: () {
-      //       HapticFeedback.mediumImpact();
+      //       AppHaptics.vibrate();
       //       _navigateToResults();
       //     },
       //     padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

@@ -7,6 +7,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/store/shared_pref.dart';
 import '../auth/login_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -146,7 +147,7 @@ class _WizardRecommendationAppState extends State<WizardRecommendationApp> {
         child: WizardButton(
           label: 'wizard_recommendation.create_account'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             // Mark wizard as completed
             SharedPref.setWizardCompleted(true);
             _navigateToAuth();

@@ -7,6 +7,7 @@ import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -121,7 +122,7 @@ class WizardDreamWeight extends StatelessWidget {
                                 label: 'wizard_dream_weight.lbs'.tr(),
                                 isActive: !isKg,
                                 onTap: () async {
-                                  HapticFeedback.lightImpact();
+                                  AppHaptics.vibrate();
                                   provider.toggleUnit(false);
                                   await provider.saveAllWizardData();
                                 },
@@ -131,7 +132,7 @@ class WizardDreamWeight extends StatelessWidget {
                                 label: 'wizard_dream_weight.kgs'.tr(),
                                 isActive: isKg,
                                 onTap: () async {
-                                  HapticFeedback.lightImpact();
+                                  AppHaptics.vibrate();
                                   provider.toggleUnit(true);
                                   await provider.saveAllWizardData();
                                 },
@@ -236,7 +237,7 @@ class WizardDreamWeight extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_dream_weight.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             provider.nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

@@ -7,6 +7,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -129,7 +130,7 @@ class WizardWorkout extends StatelessWidget {
                               final isSelected = provider.selectedWorkoutIndex == i;
                               return GestureDetector(
                                 onTap: () async {
-                                  HapticFeedback.lightImpact();
+                                  AppHaptics.vibrate();
                                   provider.selectWorkoutIndex(i);
                                   await provider.saveAllWizardData();
                                 },
@@ -183,7 +184,7 @@ class WizardWorkout extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_workout.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           isEnabled: provider.selectedWorkoutIndex != null,

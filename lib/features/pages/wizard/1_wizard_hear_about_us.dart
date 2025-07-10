@@ -9,6 +9,7 @@ import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/custom_widgets/wizard_icon.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -80,7 +81,7 @@ class WizardHearAboutUs extends StatelessWidget {
                         icon: AppIcons.insta,
                         isSelected: selectedSocialMedia == 0,
                         onTap: () async {
-                          HapticFeedback.lightImpact();
+                          AppHaptics.vibrate();
                           provider.selectSocialMedia(0);
                           await provider.saveAllWizardData();
                         },
@@ -91,7 +92,7 @@ class WizardHearAboutUs extends StatelessWidget {
                         icon: AppIcons.fb,
                         isSelected: selectedSocialMedia == 1,
                         onTap: () async {
-                          HapticFeedback.lightImpact();
+                          AppHaptics.vibrate();
                           provider.selectSocialMedia(1);
                           await provider.saveAllWizardData();
                         },
@@ -102,7 +103,7 @@ class WizardHearAboutUs extends StatelessWidget {
                         icon: AppIcons.web,
                         isSelected: selectedSocialMedia == 2,
                         onTap: () async {
-                          HapticFeedback.lightImpact();
+                          AppHaptics.vibrate();
                           provider.selectSocialMedia(2);
                           await provider.saveAllWizardData();
                         },
@@ -113,7 +114,7 @@ class WizardHearAboutUs extends StatelessWidget {
                         icon: AppIcons.tiktok,
                         isSelected: selectedSocialMedia == 3,
                         onTap: () async {
-                          HapticFeedback.lightImpact();
+                          AppHaptics.vibrate();
                           provider.selectSocialMedia(3);
                           await provider.saveAllWizardData();
                         },
@@ -131,7 +132,7 @@ class WizardHearAboutUs extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_hear_about_us.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           isEnabled: selectedSocialMedia != null,

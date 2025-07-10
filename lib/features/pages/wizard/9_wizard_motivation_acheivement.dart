@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_icons.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -200,7 +201,7 @@ class WizardMotivationAchiement extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_motivation_achievement.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

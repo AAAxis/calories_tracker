@@ -7,6 +7,7 @@ import '../../providers/wizard_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/utils/haptics.dart';
 class WizardYourAge extends StatelessWidget {
   const WizardYourAge({super.key});
 
@@ -53,6 +54,7 @@ class WizardYourAge extends StatelessWidget {
                         child: IconButton(
                           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                           onPressed: () {
+                            AppHaptics.vibrate();
                             // Navigate back using the wizard provider
                             Provider.of<WizardProvider>(context, listen: false).prevPage();
                           },
@@ -168,7 +170,7 @@ class WizardYourAge extends StatelessWidget {
         child: WizardButton(
           label: 'wizard_age.continue'.tr(),
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHaptics.vibrate();
             Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),

@@ -10,6 +10,7 @@ import '14_wizard_referal.dart';  // Add import for Wizard18
 import '../../../core/custom_widgets/calorie_gauage_wizard.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/custom_widgets/wizard_icon.dart';
+import '../../../core/utils/haptics.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
