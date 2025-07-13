@@ -11,6 +11,7 @@ import 'package:calories_tracker/providers/dashboard_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -64,7 +65,7 @@ class _DashboardViewState extends State<DashboardView> {
                         Image.asset(Assets.icons.premium.path),
                         SizedBox(width: 4.w(context)),
                         AppText(
-                          'Get Premium ',
+                          'dashboard.get_premium'.tr(),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: AppColors.black,

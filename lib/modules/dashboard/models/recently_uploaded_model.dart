@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
+
 class RecentlyUploadedModel {
   final String image;
-  final String title;
+  final String titleKey;
   final String time;
   final String overalAllCalorie;
   final String proteinCalorie;
@@ -9,19 +11,21 @@ class RecentlyUploadedModel {
 
   RecentlyUploadedModel({
     required this.image,
-    required this.title,
+    required this.titleKey,
     required this.time,
     required this.overalAllCalorie,
     required this.proteinCalorie,
     required this.fatsCalorie,
     required this.carbsCalorie,
   });
+
+  String get title => titleKey.tr();
 }
 
 List<RecentlyUploadedModel> recentlyUploadedList = [
   RecentlyUploadedModel(
     image: 'assets/images/burger.jpg',
-    title: 'Burger',
+    titleKey: 'food_items.burger',
     time: '14:53 PM',
     overalAllCalorie: '157 kCal',
     proteinCalorie: '56g',
@@ -30,7 +34,7 @@ List<RecentlyUploadedModel> recentlyUploadedList = [
   ),
   RecentlyUploadedModel(
     image: 'assets/images/pizza.jpg',
-    title: 'Pizza',
+    titleKey: 'food_items.pizza',
     time: '20:25 PM',
     overalAllCalorie: '365 kCal',
     proteinCalorie: '39g',
@@ -39,7 +43,7 @@ List<RecentlyUploadedModel> recentlyUploadedList = [
   ),
   RecentlyUploadedModel(
     image: 'assets/images/white_sauce_pasta.png',
-    title: 'White Sauce Pasta',
+    titleKey: 'food_items.white_sauce_pasta',
     time: '10:20 PM',
     overalAllCalorie: '358 kCal',
     proteinCalorie: '80g',

@@ -4,6 +4,7 @@ import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // Ingredient model
 class Ingredient {
@@ -14,15 +15,17 @@ class Ingredient {
   Ingredient({required this.name, required this.kcal, required this.serving});
 }
 
-// Dummy ingredient data
-final List<Ingredient> dummyIngredients = [
-  Ingredient(name: 'Plain Yogurt', kcal: 10, serving: 'tbsp'),
-  Ingredient(name: 'Peanut Butter', kcal: 106, serving: 'tbsp'),
-  Ingredient(name: 'Egg', kcal: 74, serving: 'Large'),
-  Ingredient(name: 'Avocado', kcal: 10, serving: 'serving'),
-  Ingredient(name: 'Butter', kcal: 810, serving: 'stick'),
-  Ingredient(name: 'Spinach', kcal: 455, serving: 'cup'),
-];
+// Dummy ingredient data - will be initialized inside widget
+List<Ingredient> getDummyIngredients() {
+  return [
+    Ingredient(name: 'ingredients.ingredients_list.plain_yogurt'.tr(), kcal: 10, serving: 'ingredients.serving_units.tbsp'.tr()),
+    Ingredient(name: 'ingredients.ingredients_list.peanut_butter'.tr(), kcal: 106, serving: 'ingredients.serving_units.tbsp'.tr()),
+    Ingredient(name: 'ingredients.ingredients_list.egg'.tr(), kcal: 74, serving: 'ingredients.serving_units.large'.tr()),
+    Ingredient(name: 'ingredients.ingredients_list.avocado'.tr(), kcal: 10, serving: 'ingredients.serving_units.serving'.tr()),
+    Ingredient(name: 'ingredients.ingredients_list.butter'.tr(), kcal: 810, serving: 'ingredients.serving_units.stick'.tr()),
+    Ingredient(name: 'ingredients.ingredients_list.spinach'.tr(), kcal: 455, serving: 'ingredients.serving_units.cup'.tr()),
+  ];
+}
 
 class IngredientsView extends StatelessWidget {
   const IngredientsView({super.key});
@@ -43,7 +46,7 @@ class IngredientsView extends StatelessWidget {
               SearchField(w: w),
               SizedBox(height: 40.h(context)),
               Text(
-                'Suggestions',
+                'ingredients.suggestions'.tr(),
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -54,9 +57,10 @@ class IngredientsView extends StatelessWidget {
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 10),
                   itemBuilder: (context, index) {
+                    final ingredients = getDummyIngredients();
                     return GestureDetector(
                       onTap: () {
-                        context.push('/edit-ingredients', extra: dummyIngredients[index].name);
+                        context.push('/edit-ingredients', extra: ingredients[index].name);
                       },
                       child: Container(
                         width: w,
@@ -80,7 +84,7 @@ class IngredientsView extends StatelessWidget {
                                     children: [
                                       SizedBox(width: 10),
                                       Text(
-                                        dummyIngredients[index].name,
+                                        ingredients[index].name,
                                         style: GoogleFonts.poppins(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -99,7 +103,7 @@ class IngredientsView extends StatelessWidget {
                                         ),
                                         SizedBox(width: 10),
                                         Text(
-                                          '${dummyIngredients[index].kcal}kCal',
+                                          '${ingredients[index].kcal}kCal',
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
@@ -119,7 +123,7 @@ class IngredientsView extends StatelessWidget {
                                         ),
                                         SizedBox(width: 5),
                                         Text(
-                                          dummyIngredients[index].serving,
+                                          ingredients[index].serving,
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
@@ -143,7 +147,7 @@ class IngredientsView extends StatelessWidget {
                   separatorBuilder: (_, __) {
                     return SizedBox(height: 10.h(context));
                   },
-                  itemCount: dummyIngredients.length,
+                  itemCount: getDummyIngredients().length,
                 ),
               ),
             ],
@@ -183,7 +187,7 @@ class SearchField extends StatelessWidget {
             child: Icon(Icons.search, color: Color(0xff999999)),
           ),
           border: InputBorder.none,
-          hintText: 'search for any ingredient',
+          hintText: 'ingredients.search_hint'.tr(),
           hintStyle: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -212,7 +216,7 @@ class BackActions extends StatelessWidget {
             child: Image.asset('assets/icons/ingredients-back.png', height: 50),
           ),
           Text(
-            'Add Ingredients',
+            'ingredients.add_ingredients'.tr(),
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.w600,

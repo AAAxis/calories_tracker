@@ -9,6 +9,7 @@ import 'package:calories_tracker/providers/dashboard_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({super.key});
@@ -68,7 +69,7 @@ class DashboardContent extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                                 AppText(
-                                  'Daily Calories Left',
+                                  'dashboard.daily_calories_left'.tr(),
                                   fontSize: 13,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w400,
@@ -86,19 +87,19 @@ class DashboardContent extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CalorieTrackerProgressBar(
-                              title: 'Protein',
+                              title: 'common.protein'.tr(),
                               value: dashboardProvider.proteinValue,
                               overallValue: '78/90g',
                               color: AppColors.greenColor,
                             ),
                             CalorieTrackerProgressBar(
-                              title: 'Fats',
+                              title: 'common.fats'.tr(),
                               value: dashboardProvider.fatsValue,
                               overallValue: '45/70g',
                               color: AppColors.redColor,
                             ),
                             CalorieTrackerProgressBar(
-                              title: 'Carbs',
+                              title: 'common.carbs'.tr(),
                               value: dashboardProvider.carbsValue,
                               overallValue: '78/110g',
                               color: AppColors.yellowColor,
@@ -126,7 +127,7 @@ class DashboardContent extends StatelessWidget {
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "You have been logging meals for 7 days. It's looking good, keep it up!",
+                        'dashboard.meals_logged_motivation'.tr(),
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w600,
@@ -139,7 +140,7 @@ class DashboardContent extends StatelessWidget {
               ),
               SizedBox(height: 10.h(context)),
               AppText(
-                'Recently Uploaded',
+                'dashboard.recently_uploaded'.tr(),
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -148,7 +149,7 @@ class DashboardContent extends StatelessWidget {
                 child: dashboardProvider.recentlyUploadedList.isEmpty
                     ? Center(
                         child: Text(
-                          'No recently uploaded items',
+                          'dashboard.no_recently_uploaded'.tr(),
                           style: TextStyle(color: Colors.grey),
                         ),
                       )
@@ -253,20 +254,20 @@ class DashboardContent extends StatelessWidget {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               CalorieTrackerProgressBar(
-                                                title: 'Protein',
+                                                title: 'common.protein'.tr(),
                                                 value: 0.30,
                                                 overallValue:
                                                     '${data.proteinCalorie}/90g',
                                                 color: AppColors.greenColor,
                                               ),
                                               CalorieTrackerProgressBar(
-                                                title: 'Fats',
+                                                title: 'common.fats'.tr(),
                                                 value: 0.5,
                                                 overallValue: '${data.fatsCalorie}/70g',
                                                 color: AppColors.redColor,
                                               ),
                                               CalorieTrackerProgressBar(
-                                                title: 'Carbs',
+                                                title: 'common.carbs'.tr(),
                                                 value: 0.4,
                                                 overallValue: '${data.carbsCalorie}/110g',
                                                 color: AppColors.yellowColor,

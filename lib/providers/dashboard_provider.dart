@@ -14,7 +14,7 @@ class DashboardProvider extends ChangeNotifier {
     _recentlyUploadedList = [
       RecentlyUploadedModel(
         image: 'assets/images/burger.jpg',
-        title: 'Burger',
+        titleKey: 'food_items.burger',
         time: '14:53 PM',
         overalAllCalorie: '157 kCal',
         proteinCalorie: '56g',
@@ -23,7 +23,7 @@ class DashboardProvider extends ChangeNotifier {
       ),
       RecentlyUploadedModel(
         image: 'assets/images/pizza.jpg',
-        title: 'Pizza',
+        titleKey: 'food_items.pizza',
         time: '20:25 PM',
         overalAllCalorie: '365 kCal',
         proteinCalorie: '39g',
@@ -32,7 +32,7 @@ class DashboardProvider extends ChangeNotifier {
       ),
       RecentlyUploadedModel(
         image: 'assets/images/white_sauce_pasta.png',
-        title: 'White Sauce Pasta',
+        titleKey: 'food_items.white_sauce_pasta',
         time: '10:20 PM',
         overalAllCalorie: '358 kCal',
         proteinCalorie: '80g',

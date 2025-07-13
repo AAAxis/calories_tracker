@@ -7,6 +7,7 @@ import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BottomNavView extends StatefulWidget {
   const BottomNavView({super.key});
@@ -20,9 +21,9 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   final List<Widget> _pages = [
     const DashboardView(),
-    const PlaceholderWidget(title: 'Stats', icon: Icons.start_sharp),
-    const PlaceholderWidget(title: 'Scan', icon: Icons.camera_alt),
-    const PlaceholderWidget(title: 'Fridge', icon: Icons.fork_right_rounded),
+    PlaceholderWidget(title: 'bottom_nav.stats'.tr(), icon: Icons.start_sharp),
+    PlaceholderWidget(title: 'bottom_nav.scan'.tr(), icon: Icons.camera_alt),
+    PlaceholderWidget(title: 'bottom_nav.fridge'.tr(), icon: Icons.fork_right_rounded),
   ];
 
   @override
@@ -77,7 +78,7 @@ class PlaceholderWidget extends StatelessWidget {
             ),
             SizedBox(height: 10.h(context)),
             AppText(
-              'Coming Soon!',
+              'bottom_nav.coming_soon'.tr(),
               fontSize: 16,
               fontWeight: FontWeight.w400,
               color: AppColors.black.withOpacity(0.6),

@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:calories_tracker/core/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -28,7 +29,7 @@ class _ProfileViewState extends State<ProfileView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error during logout: $e')),
+          SnackBar(content: Text('${'profile.error_during_logout'.tr()}$e')),
         );
       }
     } finally {
@@ -65,7 +66,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ),
                     Text(
-                      'My Profile',
+                      'profile.my_profile'.tr(),
                       style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontSize: 32,
@@ -129,32 +130,32 @@ class _ProfileViewState extends State<ProfileView> {
                     RowData(
                       onTap: () {},
                       icon: 'assets/icons/account.png',
-                      title: 'Personal Information',
+                      title: 'profile.personal_information'.tr(),
                     ),
                     SizedBox(height: 20.h(context)),
                     RowData(
                       onTap: () {},
                       icon: 'assets/icons/meals.png',
-                      title: 'My Meals',
+                      title: 'profile.my_meals'.tr(),
                     ),
 
                     SizedBox(height: 20.h(context)),
                     RowData(
                       onTap: () {},
                       icon: 'assets/icons/report.png',
-                      title: 'Nutrition Report',
+                      title: 'profile.nutrition_report'.tr(),
                     ),
                     SizedBox(height: 20.h(context)),
                     RowData(
                       onTap: () {},
                       icon: 'assets/icons/Favorite.png',
-                      title: 'Favorites Food',
+                      title: 'profile.favorites_food'.tr(),
                     ),
                     SizedBox(height: 20.h(context)),
                     RowData(
                       onTap: _isLoggingOut ? null : () { _handleLogout(); },
                       icon: 'assets/icons/Logout.png',
-                      title: 'Log out',
+                      title: 'profile.log_out'.tr(),
                     ),
                   ],
                 ),

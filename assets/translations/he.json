@@ -72,6 +72,137 @@
     "hebrew": "עברית",
     "russian": "רוסית"
   },
+  "dashboard": {
+    "daily_calories_left": "קלוריות יומיות נותרו",
+    "meals_logged_motivation": "אתה מתעד ארוחות כבר 7 ימים. זה נראה טוב, המשך כך!",
+    "recently_uploaded": "הועלה לאחרונה",
+    "no_recently_uploaded": "אין פריטים שהועלו לאחרונה",
+    "get_premium": "קבל פרימיום",
+    "water_intake": "צריכת מים",
+    "litres": "ליטרים",
+    "streaks_count": "ספירת\nרצפים",
+    "you_doing_great": "אתה עושה נהדר!",
+    "current_weight": "משקל\nנוכחי",
+    "steps": "צעדים",
+    "kcal": "קלוריות",
+    "km": "ק״מ",
+    "kg": "ק״ג",
+    "calendar": {
+      "day_short_mon": "ב׳",
+      "day_short_tue": "ג׳",
+      "day_short_wed": "ד׳",
+      "day_short_thu": "ה׳",
+      "day_short_fri": "ו׳",
+      "day_short_sat": "ש׳",
+      "day_short_sun": "א׳"
+    },
+    "steps_today": "צעדים היום",
+    "sleep_hours": "שעות שינה",
+    "title": "לוח בקרה",
+    "your_pantry": "המזווה שלך",
+    "loading_meals": "טוען ארוחות...",
+    "recent_meals": "ארוחות אחרונות",
+    "filter_recent": "אחרונות",
+    "filter_favorites": "מועדפים",
+    "filter_calories": "קלוריות",
+    "kcal_today": "קלוריות היום",
+    "protein": "חלבון",
+    "carbs": "פחמימות",
+    "fats": "שומנים",
+    "no_meals": "אין ארוחות להצגה",
+    "delete_analysis": "מחק ניתוח",
+    "delete_confirm": "האם אתה בטוח שברצונך למחוק ניתוח זה?",
+    "delete": "מחק",
+    "cancel": "ביטול",
+    "meal_deleted": "הארוחה נמחקה בהצלחה",
+    "delete_error": "שגיאה במחיקת ארוחה",
+    "new_analysis": "ניתוח ארוחה חדש הושלם",
+    "display": "הצג",
+    "adjust_goals": "התאם יעדים",
+    "calories": "קלוריות",
+    "calories_left": "קלוריות נותרו",
+    "calories_over": "קלוריות מעל",
+    "goals_updated": "היעדים עודכנו בהצלחה",
+    "goals_error": "שגיאה בעדכון היעדים",
+    "nav_home": "בית",
+    "nav_add": "הוסף",
+    "nav_roadmap": "מפת דרכים",
+    "add_meal": "הוסף ארוחה",
+    "choose_add_method": "בחר כיצד להוסיף ארוחה.",
+    "camera": "מצלמה",
+    "gallery": "גלריה",
+    "save": "שמור",
+    "calories_remaining": "קלוריות שנותרו",
+    "login_required_title": "נדרש התחברות",
+    "login_required_content": "עליך להיות מחובר כדי לשמור תוצאות. אנא התחבר או צור חשבון.",
+    "login": "התחבר",
+    "nav_settings": "הגדרות"
+  },
+  "profile": {
+    "my_profile": "הפרופיל שלי",
+    "personal_information": "מידע אישי",
+    "my_meals": "הארוחות שלי",
+    "nutrition_report": "דוח תזונה",
+    "favorites_food": "מזון מועדף",
+    "log_out": "התנתק",
+    "error_during_logout": "שגיאה במהלך התנתקות: "
+  },
+  "item_detail": {
+    "meal_calories": "קלוריות ארוחה",
+    "ingredients": "מרכיבים",
+    "nutrition": "תזונה",
+    "add_more": "הוסף עוד",
+    "ingredients_list": {
+      "buns": "לחמניות",
+      "cheese": "גבינה",
+      "tomato": "עגבניה",
+      "beef": "בשר בקר",
+      "onion": "בצל",
+      "lettuce": "חסה",
+      "pickles": "חמוצים",
+      "mustard": "חרדל",
+      "ketchup": "קטשופ"
+    }
+  },
+  "ingredients": {
+    "suggestions": "הצעות",
+    "search_hint": "חפש כל מרכיב",
+    "add_ingredients": "הוסף מרכיבים",
+    "ingredients_list": {
+      "plain_yogurt": "יוגורט רגיל",
+      "peanut_butter": "חמאת בוטנים",
+      "egg": "ביצה",
+      "avocado": "אבוקדו",
+      "butter": "חמאה",
+      "spinach": "תרד"
+    },
+    "serving_units": {
+      "tbsp": "כף",
+      "large": "גדול",
+      "serving": "מנה",
+      "stick": "מקל",
+      "cup": "כוס"
+    }
+  },
+  "edit_ingredients": {
+    "edit_ingredients": "ערוך מרכיבים",
+    "ingredient_calories": "קלוריות מרכיב",
+    "measurements": "מדידות",
+    "number_of_servings": "מספר מנות",
+    "add_ingredient": "הוסף מרכיב",
+    "measurement_units": {
+      "tsp": "כפית",
+      "tbsp": "כף",
+      "cup": "כוס",
+      "ounce": "אונקיה"
+    }
+  },
+  "bottom_nav": {
+    "stats": "סטטיסטיקות",
+    "scan": "סריקה",
+    "fridge": "מקרר",
+    "coming_soon": "בקרוב!"
+  },
   "common": {
     "next": "הבא",
     "back": "חזור",
@@ -304,49 +435,6 @@
     "failed": "ההרשמה נכשלה",
     "verification_error": "שגיאה בשליחת קוד אימות"
   },
-  "dashboard": {
-    "steps_today": "צעדים היום",
-    "sleep_hours": "שעות שינה",
-    "title": "לוח בקרה",
-    "your_pantry": "המזווה שלך",
-    "loading_meals": "טוען ארוחות...",
-    "recent_meals": "ארוחות אחרונות",
-    "filter_recent": "אחרונות",
-    "filter_favorites": "מועדפים",
-    "filter_calories": "קלוריות",
-    "kcal_today": "קלוריות היום",
-    "protein": "חלבון",
-    "carbs": "פחמימות",
-    "fats": "שומנים",
-    "no_meals": "אין ארוחות להצגה",
-    "delete_analysis": "מחק ניתוח",
-    "delete_confirm": "האם אתה בטוח שברצונך למחוק ניתוח זה?",
-    "delete": "מחק",
-    "cancel": "ביטול",
-    "meal_deleted": "הארוחה נמחקה בהצלחה",
-    "delete_error": "שגיאה במחיקת ארוחה",
-    "new_analysis": "ניתוח ארוחה חדש הושלם",
-    "display": "הצג",
-    "adjust_goals": "התאם יעדים",
-    "calories": "קלוריות",
-    "calories_left": "קלוריות נותרו",
-    "calories_over": "קלוריות מעל",
-    "goals_updated": "היעדים עודכנו בהצלחה",
-    "goals_error": "שגיאה בעדכון היעדים",
-    "nav_home": "בית",
-    "nav_add": "הוסף",
-    "nav_roadmap": "מפת דרכים",
-    "add_meal": "הוסף ארוחה",
-    "choose_add_method": "בחר כיצד להוסיף ארוחה.",
-    "camera": "מצלמה",
-    "gallery": "גלריה",
-    "save": "שמור",
-    "calories_remaining": "קלוריות שנותרו",
-    "login_required_title": "נדרש התחברות",
-    "login_required_content": "עליך להיות מחובר כדי לשמור תוצאות. אנא התחבר או צור חשבון.",
-    "login": "התחבר",
-    "nav_settings": "הגדרות"
-  },
   "details": {
     "notes": "הערות",
     "add_note": "הוסף הערה",
@@ -476,15 +564,6 @@
     "kcal": "קק\"ל",
     "grams": "גרם",
     "save_meal": "שמור ארוחה"
-  },
-  "ingredients": {
-    "title": "רשימת מרכיבים",
-    "add": "הוסף מרכיב",
-    "edit": "ערוך מרכיב",
-    "delete": "מחק",
-    "cancel": "ביטול",
-    "save": "שמור",
-    "ingredient_name": "שם המרכיב"
   },
   "ingredients_edit": {
     "title": "עריכת מרכיבים",
@@ -732,7 +811,9 @@
     "recommendation_2": "עקוב אחרי המלצות הקלוריות היומיות שלך",
     "recommendation_3": "עקוב אחרי האוכל שלך",
     "recommendation_4": "אזן את הפחמימות, החלבונים והשומנים שלך.",
-    "continue": "המשך"
+    "continue": "המשך",
+    "consistency_tip": "ככל שתתמיד קצב הירידה / העלאה במשקל ילך ויתעצם",
+    "sign_in_cta": "התחבר כדי להמשיך במסע שלך"
   },
   "wizard_apple_health": {
     "title": "Apple Health",
@@ -823,5 +904,10 @@
     "continue_with_email": "המשך עם אימייל",
     "apple_sign_in_failed": "התחברות עם Apple נכשלה",
     "google_sign_in_failed": "התחברות עם Google נכשלה"
+  },
+  "food_items": {
+    "burger": "המבורגר",
+    "pizza": "פיצה",
+    "white_sauce_pasta": "פסטה ברוטב לבן"
   }
 }

@@ -7,6 +7,7 @@ import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditIngredientsView extends StatelessWidget {
   const EditIngredientsView({super.key, required this.ingredient});
@@ -39,7 +40,7 @@ class EditIngredientsView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Edit Ingredients',
+                          'edit_ingredients.edit_ingredients'.tr(),
                           style: GoogleFonts.poppins(
                             color: Colors.black,
                             fontSize: 17,
@@ -122,7 +123,7 @@ class EditIngredientsView extends StatelessWidget {
                                             fontWeight: FontWeight.w600,
                                           ),
                                           AppText(
-                                            'Ingredient Calories',
+                                            'edit_ingredients.ingredient_calories'.tr(),
                                             fontSize: 13,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400,
@@ -144,19 +145,19 @@ class EditIngredientsView extends StatelessWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       CalorieTrackerProgressBar(
-                                        title: 'Protein',
+                                        title: 'common.protein'.tr(),
                                         value: 0.58,
                                         overallValue: '8g',
                                         color: AppColors.greenColor,
                                       ),
                                       CalorieTrackerProgressBar(
-                                        title: 'Fats',
+                                        title: 'common.fats'.tr(),
                                         value: 0.8,
                                         overallValue: '16g',
                                         color: AppColors.redColor,
                                       ),
                                       CalorieTrackerProgressBar(
-                                        title: 'Carbs',
+                                        title: 'common.carbs'.tr(),
                                         value: 0.48,
                                         overallValue: '7g',
                                         color: AppColors.yellowColor,
@@ -175,7 +176,7 @@ class EditIngredientsView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Measurements',
+                                'edit_ingredients.measurements'.tr(),
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -194,7 +195,7 @@ class EditIngredientsView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Number of Servings',
+                                'edit_ingredients.number_of_servings'.tr(),
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -226,7 +227,7 @@ class EditIngredientsView extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Add Ingredient',
+                          'edit_ingredients.add_ingredient'.tr(),
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -255,11 +256,20 @@ class MeasurementSelector extends StatefulWidget {
 }
 
 class _MeasurementSelectorState extends State<MeasurementSelector> {
-  final List<String> measurements = ['tsp.', 'tbsp.', 'Cup', 'Ounce'];
   int selected = 1;
+
+  List<String> getMeasurements() {
+    return [
+      'edit_ingredients.measurement_units.tsp'.tr(),
+      'edit_ingredients.measurement_units.tbsp'.tr(),
+      'edit_ingredients.measurement_units.cup'.tr(),
+      'edit_ingredients.measurement_units.ounce'.tr()
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final measurements = getMeasurements();
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(

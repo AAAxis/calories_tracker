@@ -8,6 +8,7 @@ import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ItemDetailView extends StatelessWidget {
   const ItemDetailView({super.key, required this.data});
@@ -110,7 +111,7 @@ class ItemDetailView extends StatelessWidget {
                                               fontWeight: FontWeight.w600,
                                             ),
                                             AppText(
-                                              'Meal Calories',
+                                              'item_detail.meal_calories'.tr(),
                                               fontSize: 13,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w400,
@@ -132,19 +133,19 @@ class ItemDetailView extends StatelessWidget {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         CalorieTrackerProgressBar(
-                                          title: 'Protein',
+                                          title: 'common.protein'.tr(),
                                           value: 0.78,
                                           overallValue: '78/90g',
                                           color: AppColors.greenColor,
                                         ),
                                         CalorieTrackerProgressBar(
-                                          title: 'Fats',
+                                          title: 'common.fats'.tr(),
                                           value: 0.5,
                                           overallValue: '45/70g',
                                           color: AppColors.redColor,
                                         ),
                                         CalorieTrackerProgressBar(
-                                          title: 'Carbs',
+                                          title: 'common.carbs'.tr(),
                                           value: 0.78,
                                           overallValue: '78/110g',
                                           color: AppColors.yellowColor,
@@ -159,7 +160,7 @@ class ItemDetailView extends StatelessWidget {
                           // Add your content here
                           SizedBox(height: 20.h(context)),
                           Text(
-                            'Ingredients',
+                            'item_detail.ingredients'.tr(),
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -188,7 +189,7 @@ class ItemDetailView extends StatelessWidget {
                   icon: Image.asset('assets/icons/back.png', height: 40),
                 ),
                 Text(
-                  'Nutrition',
+                  'item_detail.nutrition'.tr(),
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: 17,
@@ -215,21 +216,25 @@ class IngredientButtons extends StatefulWidget {
 }
 
 class _IngredientButtonsState extends State<IngredientButtons> {
-  final List<String> ingredients = [
-    'Buns',
-    'Cheese',
-    'Tomato',
-    'Beef',
-    'Onion',
-    'Lettuce',
-    'Pickles',
-    'Mustard',
-    'Ketchup',
-  ];
   int? selectedIndex;
+
+  List<String> getIngredients() {
+    return [
+      'item_detail.ingredients_list.buns'.tr(),
+      'item_detail.ingredients_list.cheese'.tr(),
+      'item_detail.ingredients_list.tomato'.tr(),
+      'item_detail.ingredients_list.beef'.tr(),
+      'item_detail.ingredients_list.onion'.tr(),
+      'item_detail.ingredients_list.lettuce'.tr(),
+      'item_detail.ingredients_list.pickles'.tr(),
+      'item_detail.ingredients_list.mustard'.tr(),
+      'item_detail.ingredients_list.ketchup'.tr(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final ingredients = getIngredients();
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -288,7 +293,7 @@ class _IngredientButtonsState extends State<IngredientButtons> {
                 Icon(Icons.add, color: Colors.grey),
                 SizedBox(width: 4),
                 Text(
-                  'Add more',
+                  'item_detail.add_more'.tr(),
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w700,

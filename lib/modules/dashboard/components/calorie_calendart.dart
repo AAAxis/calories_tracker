@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DayItem {
   final DateTime date;
@@ -143,7 +144,7 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      DateFormat('E').format(day.date),
+                      'dashboard.calendar.day_short_${DateFormat('E', 'en').format(day.date).toLowerCase()}'.tr(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,

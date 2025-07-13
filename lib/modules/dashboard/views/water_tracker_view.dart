@@ -3,6 +3,7 @@ import 'package:calories_tracker/modules/dashboard/components/step_progress_circ
 import 'package:flutter/material.dart';
 import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WaterTrackerView extends StatefulWidget {
   const WaterTrackerView({super.key});
@@ -20,6 +21,8 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Localizations.localeOf(context).languageCode == 'he';
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
       child: Column(
@@ -52,12 +55,12 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                            'Water Intake',
+                            'dashboard.water_intake'.tr(),
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),
                           AppText(
-                            '${totalIntake.toStringAsFixed(1)}/${(glassCount * glassVolume).toStringAsFixed(1)} Litres',
+                            '${totalIntake.toStringAsFixed(1)}/${(glassCount * glassVolume).toStringAsFixed(1)} ${'dashboard.litres'.tr()}',
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Color(0xff5A5B5C),
@@ -140,9 +143,9 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                   children: [
                     Positioned(
                       top: 10.h(context),
-                      left: 20.w(context),
+                      left: isRtl ? 110.w(context) : 20.w(context),
                       child: Text(
-                        'Streaks\nCount',
+                        'dashboard.streaks_count'.tr(),
                         style: GoogleFonts.montserrat(
                           color: Colors.black,
                           fontSize: 16,
@@ -157,6 +160,7 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                     ),
                     Positioned(
                       top: 78.h(context),
+
                       child: Text(
                         '29',
                         style: GoogleFonts.libreBodoni(
@@ -168,14 +172,16 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                     ),
                     Positioned(
                       top: 110.h(context),
+
                       child: Text(
-                        'You’re doing great!',
+                        'dashboard.you_doing_great'.tr(),
                         style: GoogleFonts.montserrat(
                           color: Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
+
                     ),
                   ],
                 ),
@@ -199,7 +205,7 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Current\nWeight',
+                            'dashboard.current_weight'.tr(),
                             style: GoogleFonts.montserrat(
                               color: Colors.black,
                               fontSize: 16,
@@ -226,7 +232,7 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                               ),
                             ),
                             TextSpan(
-                              text: 'Kg',
+                              text: 'dashboard.kg'.tr(),
                               style: GoogleFonts.poppins(
                                 color: Color(0xff7a7a7a),
                                 fontWeight: FontWeight.w400,
@@ -245,7 +251,7 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                             width: 20,
                           ),
                           Text(
-                            '1.2Kg(-1.68%)',
+                            '1.2${'dashboard.kg'.tr()}(-1.68%)',
                             style: GoogleFonts.montserrat(
                               color: Colors.black,
                               fontSize: 10,

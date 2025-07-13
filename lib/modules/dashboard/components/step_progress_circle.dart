@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class StepProgressCircle extends StatelessWidget {
   final int steps;
@@ -58,7 +59,7 @@ class StepProgressCircle extends StatelessWidget {
               ),
             ),
             Text(
-              'Steps',
+              'dashboard.steps'.tr(),
               style: GoogleFonts.montserrat(
                 color: Colors.white,
                 fontSize: 14,
