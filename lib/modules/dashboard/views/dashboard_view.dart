@@ -80,9 +80,9 @@ class _DashboardViewState extends State<DashboardView> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h(context)),
+                  SizedBox(height: 0.h(context)),
                   CalorieCalendar(maxCalories: 2000),
-                  SizedBox(height: 20.h(context)),
+                  SizedBox(height: 10.h(context)),
                   SizedBox(
                     height: dashboardProvider.currentPage == 0
                         ? MediaQuery.of(context).size.height * 1.2

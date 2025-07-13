@@ -159,13 +159,13 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                       child: Image.asset('assets/icons/flame.png', height: 80),
                     ),
                     Positioned(
-                      top: 78.h(context),
+                      top: 71.h(context),
 
                       child: Text(
                         '29',
                         style: GoogleFonts.libreBodoni(
                           color: Colors.black,
-                          fontSize: 32,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -225,18 +225,21 @@ class _WaterTrackerViewState extends State<WaterTrackerView> {
                           children: [
                             TextSpan(
                               text: '90.22',
-                              style: GoogleFonts.poppins(
+                          // style: GoogleFonts.libreBodoni(
+
+                          style: GoogleFonts.libreBodoni(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 30,
+                                fontSize: 20,
                               ),
                             ),
+                            WidgetSpan(child: SizedBox(width: 4)),
                             TextSpan(
                               text: 'dashboard.kg'.tr(),
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.libreBodoni(
                                 color: Color(0xff7a7a7a),
                                 fontWeight: FontWeight.w400,
-                                fontSize: 30,
+                                fontSize: 20,
                               ),
                             ),
                           ],

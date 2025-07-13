@@ -26,23 +26,27 @@ class CalorieCalendar extends StatefulWidget {
 
 class _CalorieCalendarState extends State<CalorieCalendar> {
   late List<DayItem> days;
-  int selectedIndex = DateTime.now().day - 1;
+  int selectedIndex = 0;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _generateDays();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelected();
+    });
   }
 
   void _generateDays() {
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, 1);
-    final end = DateTime(now.year, now.month + 1, 0);
+    final start = now.subtract(Duration(days: 29));
+    final end = now;
 
-    days = List.generate(end.day, (index) {
+    days = List.generate(30, (index) {
       final date = start.add(Duration(days: index));
 
-      //  calorie data for demonstration
+      // calorie data for demonstration
       final mockData = {
         2: 1800,
         3: 2100,
@@ -59,16 +63,25 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
         consumedCalories: mockData[date.day],
       );
     });
+    selectedIndex = days.length - 1;
+  }
+
+  void _scrollToSelected() {
+    // Each item is about 44px wide (32 + 12 padding), adjust as needed
+    final double itemWidth = 44.0;
+    _scrollController.jumpTo((selectedIndex - 2).clamp(0, days.length) * itemWidth);
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80, // reduced from 100
+      height: 60, // reduced from 100
+
       child: ListView.separated(
+        controller: _scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: days.length,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.only(left: 25, right: 16,top: 0),
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (_, index) {
           final day = days[index];
@@ -98,7 +111,7 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
               strokeWidth: 1.5,
               child: Container(
                 width: 32,
-                height: 32,
+                height: 25,
                 alignment: Alignment.center,
                 child: Text(
                   DateFormat('dd').format(day.date),
@@ -139,7 +152,7 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
                 borderRadius: BorderRadius.circular(80),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(1.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

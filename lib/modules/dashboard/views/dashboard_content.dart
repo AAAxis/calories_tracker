@@ -19,7 +19,7 @@ class DashboardContent extends StatelessWidget {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
+          padding: EdgeInsets.symmetric(horizontal: 10.w(context),vertical: 0.h(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -36,7 +36,7 @@ class DashboardContent extends StatelessWidget {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -79,7 +79,7 @@ class DashboardContent extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.h(context)),
+                      SizedBox(height: 0.h(context)),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.w(context)),
                         child: Row(
@@ -111,12 +111,12 @@ class DashboardContent extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 10.h(context)),
+              SizedBox(height: 0.h(context)),
               // MOTIVATIONAL MESSAGE
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(vertical: 8),
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
@@ -131,17 +131,17 @@ class DashboardContent extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w600,
-                          fontSize: 15,
+                          fontSize: 12,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10.h(context)),
+              SizedBox(height: 0.h(context)),
               AppText(
                 'dashboard.recently_uploaded'.tr(),
-                fontSize: 20,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -158,7 +158,7 @@ class DashboardContent extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final data = dashboardProvider.recentlyUploadedList[index];
                           return Padding(
-                            padding: const EdgeInsets.all(4.0),
+                            padding: const EdgeInsets.all(2.0),
                             child: GestureDetector(
                               onTap: () {
                                 context.push('/item-detail', extra: data);
@@ -178,7 +178,7 @@ class DashboardContent extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Container(
-                                      height: 110.h(context),
+                                      height: 100.h(context),
                                       width: 100.w(context),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
@@ -284,7 +284,7 @@ class DashboardContent extends StatelessWidget {
                             ),
                           );
                         },
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, __) => const SizedBox(height: 4),
                         itemCount: dashboardProvider.recentlyUploadedList.length,
                       ),
               ),

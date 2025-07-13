@@ -23,7 +23,7 @@ class CalorieTrackerProgressBar extends StatelessWidget {
       children: [
         AppText(
           title,
-          fontSize: 16,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
           color: Colors.black,
         ),
@@ -43,7 +43,7 @@ class CalorieTrackerProgressBar extends StatelessWidget {
           padding: EdgeInsets.only(left: 10.w(context)),
           child: AppText(
             overallValue,
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: FontWeight.w500,
             color: Color(0xff444444),
           ),
