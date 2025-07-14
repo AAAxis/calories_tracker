@@ -227,7 +227,7 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
                         ),
 
                         Image.asset(
-                          AppAnimations.burnning,
+                          AppAnimations.goal,
                           // width: 250.w,
                           fit: BoxFit.contain,
                           gaplessPlayback: true,

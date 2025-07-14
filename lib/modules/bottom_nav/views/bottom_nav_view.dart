@@ -8,6 +8,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:calories_tracker/modules/bottom_nav/views/camera_options_view.dart';
+import 'package:calories_tracker/modules/dashboard/views/water_tracker_view.dart'; // Contains StatsView
 
 class BottomNavView extends StatefulWidget {
   const BottomNavView({super.key});
@@ -21,8 +23,8 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   final List<Widget> _pages = [
     const DashboardView(),
-    PlaceholderWidget(title: 'bottom_nav.stats'.tr(), icon: Icons.start_sharp),
-    PlaceholderWidget(title: 'bottom_nav.scan'.tr(), icon: Icons.camera_alt),
+    const StatsView(), // Real stats view with water, steps, streaks, weight
+    CameraOptionsView(),
     PlaceholderWidget(title: 'bottom_nav.fridge'.tr(), icon: Icons.fork_right_rounded),
   ];
 
@@ -63,27 +65,30 @@ class PlaceholderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon),
-            SizedBox(height: 20.h(context)),
-            AppText(
-              title,
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: AppColors.greenColor,
-            ),
-            SizedBox(height: 10.h(context)),
-            AppText(
-              'bottom_nav.coming_soon'.tr(),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: AppColors.black.withOpacity(0.6),
-            ),
-          ],
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon),
+              SizedBox(height: 20.h(context)),
+              AppText(
+                title,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: AppColors.greenColor,
+              ),
+              SizedBox(height: 10.h(context)),
+              AppText(
+                'bottom_nav.coming_soon'.tr(),
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: AppColors.black.withOpacity(0.6),
+              ),
+            ],
+          ),
         ),
       ),
     );

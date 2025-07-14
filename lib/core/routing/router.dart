@@ -39,6 +39,8 @@ import '../../modules/item_detail/views/item_detail_view.dart';
 import 'package:calories_tracker/modules/item_detail/views/ingredients_view.dart';
 import 'package:calories_tracker/modules/item_detail/views/edit_ingredients_view.dart';
 import 'package:calories_tracker/modules/dashboard/models/recently_uploaded_model.dart';
+import 'package:calories_tracker/modules/bottom_nav/views/camera_screen.dart';
+import 'package:calories_tracker/features/models/meal_model.dart';
 
 // Import wizard screens (add your real widgets)
 
@@ -119,6 +121,25 @@ class AppRouter {
         path: '/bottom-nav',
         name: 'bottom_nav',
         builder: (context, state) => const BottomNavView(),
+      ),
+
+      // Camera screen route
+      GoRoute(
+        path: '/camera',
+        name: 'camera',
+        builder: (context, state) {
+          print('🚗 Camera route accessed');
+          print('🚗 state.extra: ${state.extra}');
+          final meals = state.extra is Map && (state.extra as Map).containsKey('meals')
+              ? (state.extra as Map)['meals'] as List<Meal>?
+              : null;
+          final updateMeals = state.extra is Map && (state.extra as Map).containsKey('updateMeals')
+              ? (state.extra as Map)['updateMeals'] as Function(List<Meal>)?
+              : null;
+          print('🚗 Extracted meals: ${meals?.length ?? 'null'}');
+          print('🚗 Extracted updateMeals: ${updateMeals != null ? 'present' : 'null'}');
+          return CameraScreen(meals: meals, updateMeals: updateMeals);
+        },
       ),
 
       // Wizard screens

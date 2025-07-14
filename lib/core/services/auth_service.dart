@@ -8,24 +8,60 @@ import 'dart:io';
 import '../store/shared_pref.dart';
 
 class AuthService {
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static FirebaseAuth? _auth;
+  static FirebaseFirestore? _firestore;
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
   
+  // Initialize Firebase services
+  static void _ensureInitialized() {
+    try {
+      _auth ??= FirebaseAuth.instance;
+      _firestore ??= FirebaseFirestore.instance;
+    } catch (e) {
+      print('❌ Firebase not initialized yet: $e');
+      throw Exception('Firebase not initialized');
+    }
+  }
+  
   // Get current user
-  static User? get currentUser => _auth.currentUser;
+  static User? get currentUser {
+    try {
+      _ensureInitialized();
+      return _auth?.currentUser;
+    } catch (e) {
+      print('❌ Error getting current user: $e');
+      return null;
+    }
+  }
   
   // Check if user is logged in
-  static bool get isLoggedIn => _auth.currentUser != null;
+  static bool get isLoggedIn {
+    try {
+      _ensureInitialized();
+      return _auth?.currentUser != null;
+    } catch (e) {
+      print('❌ Error checking login status: $e');
+      return false;
+    }
+  }
   
   // Auth state stream
-  static Stream<User?> get authStateChanges => _auth.authStateChanges();
+  static Stream<User?> get authStateChanges {
+    try {
+      _ensureInitialized();
+      return _auth?.authStateChanges() ?? Stream.empty();
+    } catch (e) {
+      print('❌ Error getting auth state changes: $e');
+      return Stream.empty();
+    }
+  }
   
   // Sign out
   static Future<void> signOut() async {
     try {
+      _ensureInitialized();
       await _googleSignIn.signOut();
-      await _auth.signOut();
+      await _auth?.signOut();
       // Clear user data from SharedPreferences
       await SharedPref.clearUserData();
     } catch (e) {
@@ -36,25 +72,31 @@ class AuthService {
   
   // Check authentication status and return appropriate route
   static String getInitialRoute() {
-    // Check Firebase authentication state first
-    final currentUser = _auth.currentUser;
-    
-    if (currentUser != null) {
-      // User is already logged in
-      print('🔐 User already logged in: ${currentUser.email}');
-      return '/bottom-nav';
-    }
-    
-    // No user logged in, check wizard completion
-    final wizardCompleted = SharedPref.getWizardCompleted();
-    
-    if (wizardCompleted) {
-      // Wizard completed but not logged in
-      print('📋 Wizard completed, showing login');
-      return '/login';
-    } else {
-      // Wizard not completed
-      print('🎯 Starting onboarding flow');
+    try {
+      // Check Firebase authentication state first
+      final currentUser = AuthService.currentUser;
+      
+      if (currentUser != null) {
+        // User is already logged in
+        print('🔐 User already logged in: ${currentUser.email}');
+        return '/bottom-nav';
+      }
+      
+      // No user logged in, check wizard completion
+      final wizardCompleted = SharedPref.getWizardCompleted();
+      
+      if (wizardCompleted) {
+        // Wizard completed but not logged in
+        print('📋 Wizard completed, showing login');
+        return '/login';
+      } else {
+        // Wizard not completed
+        print('🎯 Starting onboarding flow');
+        return '/onboarding1';
+      }
+    } catch (e) {
+      print('❌ Error getting initial route: $e');
+      // Fallback to onboarding if Firebase is not available
       return '/onboarding1';
     }
   }
@@ -62,6 +104,7 @@ class AuthService {
   // APPLE SIGN IN
   static Future<AuthResult> signInWithApple() async {
     try {
+      _ensureInitialized();
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -74,7 +117,7 @@ class AuthService {
         accessToken: credential.authorizationCode,
       );
 
-      final userCredential = await _auth.signInWithCredential(oauthCredential);
+      final userCredential = await _auth!.signInWithCredential(oauthCredential);
       
       // Update user profile if we have a name from Apple
       if (credential.givenName != null || credential.familyName != null) {
@@ -86,8 +129,8 @@ class AuthService {
           await userCredential.user?.updateDisplayName(displayName);
           
           // Also update Firestore
-          if (userCredential.user != null) {
-            await _firestore
+          if (userCredential.user != null && _firestore != null) {
+            await _firestore!
                 .collection('users')
                 .doc(userCredential.user!.uid)
                 .set({
@@ -112,6 +155,7 @@ class AuthService {
   // GOOGLE SIGN IN
   static Future<AuthResult> signInWithGoogle() async {
     try {
+      _ensureInitialized();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
@@ -126,11 +170,11 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await _auth.signInWithCredential(credential);
+      final userCredential = await _auth!.signInWithCredential(credential);
       
       // Update Firestore with Google auth info
-      if (userCredential.user != null) {
-        await _firestore
+      if (userCredential.user != null && _firestore != null) {
+        await _firestore!
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
@@ -157,7 +201,8 @@ class AuthService {
     required String password
   }) async {
     try {
-      final userCredential = await _auth.signInWithEmailAndPassword(
+      _ensureInitialized();
+      final userCredential = await _auth!.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
@@ -176,6 +221,7 @@ class AuthService {
   // SEND EMAIL VERIFICATION CODE
   static Future<EmailCodeResult> sendEmailVerificationCode(String email) async {
     try {
+      _ensureInitialized();
       print('🔗 Sending request to: https://us-central1-kaliai-6dff9.cloudfunctions.net/global_auth?email=$email');
       
       // Create HTTP client with custom SSL handling
@@ -232,13 +278,14 @@ class AuthService {
     required String expectedCode,
   }) async {
     try {
+      _ensureInitialized();
       // Verify the code first
       if (verificationCode != expectedCode) {
         return AuthResult.failure('Invalid verification code. Please try again.');
       }
 
       // Create user account with Firebase Auth
-      final userCredential = await _auth.createUserWithEmailAndPassword(
+      final userCredential = await _auth!.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
@@ -248,17 +295,19 @@ class AuthService {
         await userCredential.user!.updateDisplayName(name);
         
         // Save user data to Firestore
-        await _firestore
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'email': email.trim(),
-          'name': name,
-          'displayName': name,
-          'createdAt': FieldValue.serverTimestamp(),
-          'emailVerified': true,
-          'authProvider': 'email',
-        });
+        if (_firestore != null) {
+          await _firestore!
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'email': email.trim(),
+            'name': name,
+            'displayName': name,
+            'createdAt': FieldValue.serverTimestamp(),
+            'emailVerified': true,
+            'authProvider': 'email',
+          });
+        }
 
         await _saveUserDataToPrefs(userCredential.user!);
         return AuthResult.success(userCredential.user!);
@@ -277,7 +326,8 @@ class AuthService {
   // SEND PASSWORD RESET EMAIL
   static Future<AuthResult> sendPasswordResetEmail(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
+      _ensureInitialized();
+      await _auth!.sendPasswordResetEmail(email: email.trim());
       return AuthResult.success(null, message: 'Password reset email sent to $email');
       
     } on FirebaseAuthException catch (e) {
@@ -291,22 +341,25 @@ class AuthService {
   // DELETE USER ACCOUNT
   static Future<AuthResult> deleteAccount() async {
     try {
-      final user = _auth.currentUser;
+      _ensureInitialized();
+      final user = _auth?.currentUser;
       if (user == null) {
         return AuthResult.failure('No user is currently signed in.');
       }
 
       // Delete user data from Firestore
-      await _firestore.collection('users').doc(user.uid).delete();
-      
-      // Delete user meals from Firestore
-      final mealsQuery = await _firestore
-          .collection('analyzed_meals')
-          .where('userId', isEqualTo: user.uid)
-          .get();
-      
-      for (final doc in mealsQuery.docs) {
-        await doc.reference.delete();
+      if (_firestore != null) {
+        await _firestore!.collection('users').doc(user.uid).delete();
+        
+        // Delete user meals from Firestore
+        final mealsQuery = await _firestore!
+            .collection('analyzed_meals')
+            .where('userId', isEqualTo: user.uid)
+            .get();
+        
+        for (final doc in mealsQuery.docs) {
+          await doc.reference.delete();
+        }
       }
 
       // Delete Firebase Auth account
@@ -328,7 +381,8 @@ class AuthService {
   // REAUTHENTICATE USER (required for sensitive operations)
   static Future<AuthResult> reauthenticateWithPassword(String password) async {
     try {
-      final user = _auth.currentUser;
+      _ensureInitialized();
+      final user = _auth?.currentUser;
       if (user == null || user.email == null) {
         return AuthResult.failure('No user is currently signed in.');
       }
@@ -355,7 +409,8 @@ class AuthService {
     String? photoURL,
   }) async {
     try {
-      final user = _auth.currentUser;
+      _ensureInitialized();
+      final user = _auth?.currentUser;
       if (user == null) {
         return AuthResult.failure('No user is currently signed in.');
       }
@@ -369,15 +424,17 @@ class AuthService {
       }
 
       // Update Firestore as well
-      final updateData = <String, dynamic>{};
-      if (displayName != null) updateData['displayName'] = displayName;
-      if (photoURL != null) updateData['photoURL'] = photoURL;
-      
-      if (updateData.isNotEmpty) {
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .update(updateData);
+      if (_firestore != null) {
+        final updateData = <String, dynamic>{};
+        if (displayName != null) updateData['displayName'] = displayName;
+        if (photoURL != null) updateData['photoURL'] = photoURL;
+        
+        if (updateData.isNotEmpty) {
+          await _firestore!
+              .collection('users')
+              .doc(user.uid)
+              .update(updateData);
+        }
       }
 
       // Update SharedPreferences

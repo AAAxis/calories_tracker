@@ -87,62 +87,24 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
           final day = days[index];
           final isSelected = index == selectedIndex;
 
-          final calorie = day.consumedCalories;
-          Color? bgColor;
-
-          if (calorie != null) {
-            if (calorie < day.maxCalories) {
-              bgColor = Colors.green;
-            } else if (calorie > day.maxCalories) {
-              bgColor = Colors.red;
-            } else {
-              bgColor = Colors.transparent;
-            }
-          }
-
-          Widget dateWidget;
-          if (calorie != null &&
-              (calorie < day.maxCalories || calorie > day.maxCalories)) {
-            // Show dotted border for green/red days
-            dateWidget = DottedBorder(
-              borderType: BorderType.Circle,
-              color: calorie < day.maxCalories ? Colors.green : Colors.red,
-              dashPattern: [5, 3],
-              strokeWidth: 1.5,
-              child: Container(
-                width: 32,
-                height: 25,
-                alignment: Alignment.center,
-                child: Text(
-                  DateFormat('dd').format(day.date),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
+          // Simplified date widget without red/green color logic
+          Widget dateWidget = Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              DateFormat('dd').format(day.date),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
-            );
-          } else {
-            // Original container for all other days
-            dateWidget = Container(
-              width: 32,
-              height: 32,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                DateFormat('dd').format(day.date),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-            );
-          }
+            ),
+          );
 
           return GestureDetector(
             onTap: () => setState(() => selectedIndex = index),

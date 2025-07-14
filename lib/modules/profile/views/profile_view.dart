@@ -1,4 +1,5 @@
 import 'package:calories_tracker/core/constants/wrapper.dart';
+import 'package:calories_tracker/core/widgets/user_avatar.dart';
 import 'package:calories_tracker/modules/profile/controllers/image_picker_controller.dart';
 import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,9 @@ class _ProfileViewState extends State<ProfileView> {
                                       width: 100,
                                     ),
                                   )
-                                : Image.asset('assets/icons/profile.png'),
+                                : UserAvatar(
+                                    size: 100.0,
+                                  ),
                             Positioned(
                               bottom: 0,
                               right: 0,
@@ -115,7 +118,9 @@ class _ProfileViewState extends State<ProfileView> {
                       },
                     ),
                     Text(
-                      'Alex Joseph',
+                      AuthService.currentUser?.displayName ?? 
+                      AuthService.currentUser?.email?.split('@')[0] ?? 
+                      'User',
                       style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontSize: 22,
@@ -123,7 +128,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ),
                     Text(
-                      '@alexjoseph5830',
+                      AuthService.currentUser?.email ?? 'user@example.com',
                       style: GoogleFonts.poppins(color: Colors.black, fontSize: 12),
                     ),
                     SizedBox(height: 20.h(context)),

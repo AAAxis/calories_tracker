@@ -59,7 +59,10 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => DashboardProvider()),
+          ChangeNotifierProvider(
+            create: (_) => DashboardProvider(),
+            lazy: false,
+          ),
           ChangeNotifierProvider(
             create: (_) => WizardProvider(totalScreens: 18),
           ),
@@ -75,6 +78,14 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
+          builder: (context, child) {
+            // Initialize DashboardProvider after the widget tree is built
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+              dashboardProvider.initialize();
+            });
+            return child!;
+          },
         ),
       ),
     );

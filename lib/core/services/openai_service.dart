@@ -14,7 +14,7 @@ class OpenAIService {
       print('🔥 Starting Firebase Functions analysis for image: $imageName');
       
       // Get the function URL - you'll need to replace with your actual project URL
-      final functionUrl = 'https://us-central1-kaliai-6dff9.cloudfunctions.net/analyze_meal_image_v1';
+      final functionUrl = 'https://us-central1-kaliai-6dff9.cloudfunctions.net/analyze_meal_image_v2';
       
       // Prepare the request payload to match your function's expected format
       final requestData = {
@@ -48,6 +48,16 @@ class OpenAIService {
         // Check if the response contains an error
         if (responseData.containsKey('error')) {
           print('❌ Firebase Function returned an error: ${responseData['error']}');
+          
+          // Check if there's a fallback analysis we can use
+          if (responseData.containsKey('fallback_analysis')) {
+            print('🔄 Using fallback analysis from Firebase Function');
+            final fallbackData = responseData['fallback_analysis'];
+            
+            // Transform fallback data to match expected format
+            return _transformFallbackResponse(fallbackData);
+          }
+          
           throw Exception('Firebase Function error: ${responseData['error']}');
         }
         
@@ -131,6 +141,16 @@ class OpenAIService {
         // Check if the response contains an error
         if (responseData.containsKey('error')) {
           print('❌ Firebase Function returned an error: ${responseData['error']}');
+          
+          // Check if there's a fallback analysis we can use
+          if (responseData.containsKey('fallback_analysis')) {
+            print('🔄 Using fallback analysis from Firebase Function');
+            final fallbackData = responseData['fallback_analysis'];
+            
+            // Transform fallback data to match expected format
+            return _transformFallbackResponse(fallbackData);
+          }
+          
           throw Exception('Firebase Function error: ${responseData['error']}');
         }
         
@@ -145,6 +165,79 @@ class OpenAIService {
     }
   }
   
+  /// Transform fallback Firebase Function response to match the expected format
+  static Map<String, dynamic> _transformFallbackResponse(Map<String, dynamic> fallbackResponse) {
+    try {
+      print('🔄 Transforming fallback response from Firebase Function');
+      
+      // The fallback response has different field names than the main response
+      final mealName = fallbackResponse['meal_name'] ?? 'Analysis Failed';
+      final calories = fallbackResponse['estimated_calories'] ?? 0;
+      final macros = fallbackResponse['macronutrients'] ?? {};
+      final ingredients = List<String>.from(fallbackResponse['ingredients'] ?? ['Analysis failed']);
+      final healthAssessment = fallbackResponse['health_assessment'] ?? 'Analysis failed';
+      final source = fallbackResponse['source'] ?? 'https://fdc.nal.usda.gov/';
+      
+      final transformed = <String, dynamic>{
+        'mealName': mealName,
+        'calories': _parseCalories(calories),
+        'macros': _parseMacros(macros),
+        'ingredients': ingredients,
+        'healthiness': 'N/A',
+        'healthiness_explanation': healthAssessment,
+        'source': source,
+        
+        // Add default fields
+        'nutrients': {
+          'fiber': 0.0,
+          'sugar': 0.0,
+          'sodium': 0.0,
+          'potassium': 0.0,
+          'vitamin_c': 0.0,
+          'calcium': 0.0,
+          'iron': 0.0
+        },
+        'portion_size': 'medium',
+        'meal_type': 'unknown',
+        'cooking_method': 'unknown',
+        'allergens': <String>[],
+        'dietary_tags': <String>[],
+        'detailedIngredients': <Map<String, dynamic>>[],
+      };
+      
+      print('✅ Transformed fallback response successfully');
+      return transformed;
+      
+    } catch (e) {
+      print('❌ Error transforming fallback response: $e');
+      // Return a very basic fallback
+      return {
+        'mealName': 'Analysis Error',
+        'calories': 200.0,
+        'macros': {'proteins': 10.0, 'carbs': 25.0, 'fats': 8.0},
+        'ingredients': ['Analysis failed'],
+        'healthiness': 'N/A',
+        'healthiness_explanation': 'Analysis failed. Please try again later.',
+        'source': 'https://fdc.nal.usda.gov/',
+        'nutrients': {
+          'fiber': 0.0,
+          'sugar': 0.0,
+          'sodium': 0.0,
+          'potassium': 0.0,
+          'vitamin_c': 0.0,
+          'calcium': 0.0,
+          'iron': 0.0
+        },
+        'portion_size': 'medium',
+        'meal_type': 'unknown',
+        'cooking_method': 'unknown',
+        'allergens': <String>[],
+        'dietary_tags': <String>[],
+        'detailedIngredients': <Map<String, dynamic>>[],
+      };
+    }
+  }
+
   /// Transform Firebase Function response to match the expected format in your app
   static Map<String, dynamic> _transformFirebaseResponse(Map<String, dynamic> firebaseResponse) {
     try {

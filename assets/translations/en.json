@@ -135,7 +135,9 @@
     "login_required_content": "You must be logged in to save results. Please sign in or create an account.",
     "login": "Login",
     "calories_left": "Calories left",
-    "calories_over": "Calories over"
+    "calories_over": "Calories over",
+    "no_meals_today_motivation": "No meals tracked today. Stay motivated!",
+    "start_tracking_meals": "Start tracking your meals"
   },
   "profile": {
     "my_profile": "My Profile",

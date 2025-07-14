@@ -18,7 +18,24 @@ from config import EMAIL_CONFIG, EMAIL_TEMPLATES
 app = initialize_app()
 
 # Import our custom helper module
-from openai_helper import analyze_image_with_vision
+try:
+    from openai_helper import analyze_image_with_vision
+except ImportError:
+    # Fallback implementation if import fails
+    def analyze_image_with_vision(image_url=None, prompt=None, image_base64=None):
+        return {
+            "mealName": "Analysis temporarily unavailable",
+            "estimatedCalories": 400,
+            "macros": {
+                "proteins": "20g",
+                "carbohydrates": "45g", 
+                "fats": "15g"
+            },
+            "ingredients": ["Temporary analysis unavailable"],
+            "healthiness": "N/A",
+            "health_assessment": "Analysis service is being updated. Please try again later.",
+            "source": "https://fdc.nal.usda.gov/"
+        }
 
 def send_verification_email(to_email: str, verification_code: str) -> bool:
     """Send verification email with the provided code"""
@@ -266,8 +283,34 @@ Important:
 
                 if json_start_index != -1 and json_end_index != -1 and json_end_index > json_start_index:
                     json_str_candidate = text_to_parse[json_start_index : json_end_index + 1]
+                    
+                    # Fix common JSON issues: replace single quotes with double quotes
+                    # This is a common issue with AI-generated JSON
+                    print(f"🔧 Original JSON candidate (first 200 chars): {json_str_candidate[:200]}")
+                    
+                    # Replace single quotes with double quotes for property names and string values
+                    # But be careful not to replace quotes inside strings
+                    fixed_json_str = json_str_candidate
+                    
+                    # More robust approach: handle mixed quotes and escape sequences
+                    if "'" in fixed_json_str:
+                        # If there are no double quotes at all, simple replacement is safe
+                        if '"' not in fixed_json_str:
+                            fixed_json_str = fixed_json_str.replace("'", '"')
+                            print(f"🔧 Fixed JSON by replacing all single quotes with double quotes")
+                        else:
+                            # If there are mixed quotes, use regex for more careful replacement
+                            import re
+                            # Replace single quotes around property names: 'propertyName':
+                            fixed_json_str = re.sub(r"'([^']*)'(\s*:)", r'"\1"\2', fixed_json_str)
+                            # Replace single quotes around string values: : 'value'
+                            fixed_json_str = re.sub(r":\s*'([^']*)'", r': "\1"', fixed_json_str)
+                            print(f"🔧 Fixed JSON using regex for mixed quote replacement")
+                    
+                    print(f"🔧 Fixed JSON candidate (first 200 chars): {fixed_json_str[:200]}")
+                    
                     try:
-                        parsed_json = json.loads(json_str_candidate)
+                        parsed_json = json.loads(fixed_json_str)
                         
                         # Debug: Check if healthiness is in the parsed JSON
                         print(f"🔍 Parsed JSON keys: {list(parsed_json.keys())}")
@@ -282,13 +325,31 @@ Important:
                         
                         final_json_payload_str = json.dumps(parsed_json) # Re-serialize for clean output
                     except json.JSONDecodeError as e:
-                        error_message = f"Could not parse extracted JSON (from braces) from vision API output. Error: {str(e)}. Candidate snippet: {json_str_candidate[:200]}"
+                        error_message = f"Could not parse extracted JSON (from braces) from vision API output. Error: {str(e)}. Original snippet: {json_str_candidate[:200]}. Fixed snippet: {fixed_json_str[:200]}"
                         print(error_message)
                         raise Exception(error_message) from e
                 else:
                     # If no '{...}' found, try to parse the text_to_parse directly
+                    print(f"🔧 No braces found, trying direct parse of: {text_to_parse[:200]}")
+                    
+                    # Apply the same quote fixing logic
+                    fixed_text = text_to_parse
+                    if "'" in fixed_text:
+                        # If there are no double quotes at all, simple replacement is safe
+                        if '"' not in fixed_text:
+                            fixed_text = fixed_text.replace("'", '"')
+                            print(f"🔧 Fixed direct parse text by replacing all single quotes")
+                        else:
+                            # If there are mixed quotes, use regex for more careful replacement
+                            import re
+                            # Replace single quotes around property names: 'propertyName':
+                            fixed_text = re.sub(r"'([^']*)'(\s*:)", r'"\1"\2', fixed_text)
+                            # Replace single quotes around string values: : 'value'
+                            fixed_text = re.sub(r":\s*'([^']*)'", r': "\1"', fixed_text)
+                            print(f"🔧 Fixed direct parse text using regex")
+                    
                     try:
-                        parsed_json = json.loads(text_to_parse)
+                        parsed_json = json.loads(fixed_text)
                         
                         # Debug: Check if healthiness is in the parsed JSON
                         print(f"🔍 Direct parse JSON keys: {list(parsed_json.keys())}")
@@ -303,7 +364,7 @@ Important:
                         
                         final_json_payload_str = json.dumps(parsed_json) 
                     except json.JSONDecodeError as e:
-                        error_message = f"Vision API output is not a recognized JSON object (no braces found) and not a simple JSON string after stripping. Error: {str(e)}. Output snippet: {text_to_parse[:200]}"
+                        error_message = f"Vision API output is not a recognized JSON object (no braces found) and not a simple JSON string after stripping. Error: {str(e)}. Original snippet: {text_to_parse[:200]}. Fixed snippet: {fixed_text[:200]}"
                         print(error_message)
                         raise Exception(error_message) from e
             elif isinstance(raw_analysis_output, (dict, list)):

@@ -13,10 +13,8 @@ Future<void> initializeApp({
     // Set preferred orientations
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     
-    // Initialize Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // Initialize Firebase with proper error handling
+    await _initializeFirebase();
     
     // Initialize RevenueCat
     await _initializeRevenueCat();
@@ -28,6 +26,30 @@ Future<void> initializeApp({
   } catch (error, stackTrace) {
     onError?.call(error, stackTrace);
     rethrow; // Re-throw to be caught by main's try-catch
+  }
+}
+
+Future<void> _initializeFirebase() async {
+  try {
+    // Check if Firebase is already initialized
+    if (Firebase.apps.isNotEmpty) {
+      print('✅ Firebase already initialized');
+      return;
+    }
+    
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('✅ Firebase initialized successfully');
+  } catch (e) {
+    if (e.toString().contains('already been initialized') || 
+        e.toString().contains('invalid reuse after initialization failure')) {
+      print('⚠️ Firebase already initialized, continuing...');
+      return;
+    }
+    print('❌ Error initializing Firebase: $e');
+    rethrow;
   }
 }
 
