@@ -36,8 +36,8 @@ import '../../features/providers/loading_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:calories_tracker/modules/profile/views/profile_view.dart';
 import '../../modules/item_detail/views/item_detail_view.dart';
-import 'package:calories_tracker/modules/item_detail/views/ingredients_view.dart';
 import 'package:calories_tracker/modules/item_detail/views/edit_ingredients_view.dart';
+import 'package:calories_tracker/modules/item_detail/views/ingredients_view.dart';
 import 'package:calories_tracker/modules/dashboard/models/recently_uploaded_model.dart';
 import 'package:calories_tracker/modules/bottom_nav/views/camera_screen.dart';
 import 'package:calories_tracker/features/models/meal_model.dart';
@@ -112,8 +112,8 @@ class AppRouter {
         path: '/edit-ingredients',
         name: 'edit_ingredients',
         builder: (context, state) {
-          final ingredient = state.extra as String?;
-          return EditIngredientsView(ingredient: ingredient ?? '');
+          final ingredient = state.extra as Ingredient?;
+          return EditIngredientsView(ingredient: ingredient ?? Ingredient(name: '', grams: 0, calories: 0, protein: 0, carbs: 0, fat: 0));
         },
       ),
       // New dashboard route

@@ -5,30 +5,64 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:calories_tracker/features/models/meal_model.dart';
+import 'package:calories_tracker/core/services/nutrition_database_service.dart';
 
-// Ingredient model
-class Ingredient {
-  final String name;
-  final int kcal;
-  final String serving;
+class IngredientsView extends StatefulWidget {
+  const IngredientsView({super.key, this.initialIngredients});
+  final List<Ingredient>? initialIngredients;
 
-  Ingredient({required this.name, required this.kcal, required this.serving});
+  @override
+  State<IngredientsView> createState() => _IngredientsViewState();
 }
 
-// Dummy ingredient data - will be initialized inside widget
-List<Ingredient> getDummyIngredients() {
-  return [
-    Ingredient(name: 'ingredients.ingredients_list.plain_yogurt'.tr(), kcal: 10, serving: 'ingredients.serving_units.tbsp'.tr()),
-    Ingredient(name: 'ingredients.ingredients_list.peanut_butter'.tr(), kcal: 106, serving: 'ingredients.serving_units.tbsp'.tr()),
-    Ingredient(name: 'ingredients.ingredients_list.egg'.tr(), kcal: 74, serving: 'ingredients.serving_units.large'.tr()),
-    Ingredient(name: 'ingredients.ingredients_list.avocado'.tr(), kcal: 10, serving: 'ingredients.serving_units.serving'.tr()),
-    Ingredient(name: 'ingredients.ingredients_list.butter'.tr(), kcal: 810, serving: 'ingredients.serving_units.stick'.tr()),
-    Ingredient(name: 'ingredients.ingredients_list.spinach'.tr(), kcal: 455, serving: 'ingredients.serving_units.cup'.tr()),
-  ];
-}
+class _IngredientsViewState extends State<IngredientsView> {
+  late List<Ingredient> _ingredients;
+  List<String> _allIngredientNames = [];
+  String? _selectedIngredientName;
+  double _selectedGrams = 100;
 
-class IngredientsView extends StatelessWidget {
-  const IngredientsView({super.key});
+  @override
+  void initState() {
+    super.initState();
+    _ingredients = widget.initialIngredients ?? <Ingredient>[];
+    NutritionDatabaseService.initialize().then((_) {
+      setState(() {
+        _allIngredientNames = NutritionDatabaseService.getAllIngredients();
+      });
+    });
+  }
+
+  void _addIngredientFromSuggestion(String name) {
+    final nutrition = NutritionDatabaseService.calculateNutrition(name, 100);
+    final ingredient = Ingredient(
+      name: name,
+      grams: 100,
+      calories: nutrition['calories'] ?? 0,
+      protein: nutrition['proteins'] ?? 0,
+      carbs: nutrition['carbs'] ?? 0,
+      fat: nutrition['fats'] ?? 0,
+    );
+    setState(() {
+      _ingredients.add(ingredient);
+    });
+  }
+
+  void _onSuggestionTap(String name) async {
+    final nutrition = NutritionDatabaseService.calculateNutrition(name, 100);
+    final ingredient = Ingredient(
+      name: name,
+      grams: 100,
+      calories: nutrition['calories'] ?? 0,
+      protein: nutrition['proteins'] ?? 0,
+      carbs: nutrition['carbs'] ?? 0,
+      fat: nutrition['fats'] ?? 0,
+    );
+    final editedIngredient = await context.push('/edit-ingredients', extra: ingredient);
+    if (editedIngredient is Ingredient) {
+      Navigator.pop(context, editedIngredient);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +77,6 @@ class IngredientsView extends StatelessWidget {
             children: [
               BackActions(),
               SizedBox(height: 20.h(context)),
-              SearchField(w: w),
-              SizedBox(height: 40.h(context)),
               Text(
                 'ingredients.suggestions'.tr(),
                 style: GoogleFonts.poppins(
@@ -53,101 +85,33 @@ class IngredientsView extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
+              // Suggestions list
               Expanded(
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 10),
                   itemBuilder: (context, index) {
-                    final ingredients = getDummyIngredients();
+                    final name = _allIngredientNames[index];
+                    final nutrition = NutritionDatabaseService.calculateNutrition(name, 100);
                     return GestureDetector(
-                      onTap: () {
-                        context.push('/edit-ingredients', extra: ingredients[index].name);
-                      },
+                      onTap: () => _onSuggestionTap(name),
                       child: Container(
                         width: w,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage(
-                              'assets/icons/suggestion-glass.png',
-                            ),
+                            image: AssetImage('assets/icons/suggestion-glass.png'),
                             fit: BoxFit.fill,
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 10),
-                                      Text(
-                                        ingredients[index].name,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/icons/flame-suggestions.png',
-                                          height: 25,
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          '${ingredients[index].kcal}kCal',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          '\u2022',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black.withOpacity(
-                                              .57,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          ingredients[index].serving,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black.withOpacity(
-                                              .57,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Image.asset('assets/icons/Add.png', height: 34),
-                            ],
-                          ),
+                        child: ListTile(
+                          title: Text(name),
+                          subtitle: Text('${nutrition['calories']?.toStringAsFixed(0) ?? '--'} kcal, 100g'),
+                          trailing: Icon(Icons.add, color: Colors.black),
                         ),
                       ),
                     );
                   },
-                  separatorBuilder: (_, __) {
-                    return SizedBox(height: 10.h(context));
-                  },
-                  itemCount: getDummyIngredients().length,
+                  separatorBuilder: (_, __) => SizedBox(height: 8),
+                  itemCount: _allIngredientNames.length,
                 ),
               ),
             ],

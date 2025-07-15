@@ -8,12 +8,47 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:calories_tracker/features/models/meal_model.dart';
+import 'package:calories_tracker/core/services/nutrition_database_service.dart';
 
-class EditIngredientsView extends StatelessWidget {
+class EditIngredientsView extends StatefulWidget {
   const EditIngredientsView({super.key, required this.ingredient});
-  final String ingredient;
+  final Ingredient ingredient;
+
+  @override
+  State<EditIngredientsView> createState() => _EditIngredientsViewState();
+}
+
+class _EditIngredientsViewState extends State<EditIngredientsView> {
+  late double _grams;
+  late double _servings;
+  late int _selectedMeasurement;
+
+  @override
+  void initState() {
+    super.initState();
+    _grams = widget.ingredient.grams;
+    _servings = 1.0; // Default servings
+    _selectedMeasurement = 1; // Default to tbsp
+  }
+
+  Ingredient _createUpdatedIngredient() {
+    // Calculate nutrition based on new grams
+    final nutrition = NutritionDatabaseService.calculateNutrition(widget.ingredient.name, _grams * _servings);
+    
+    return Ingredient(
+      name: widget.ingredient.name,
+      grams: _grams * _servings,
+      calories: nutrition['calories'] ?? 0,
+      protein: nutrition['proteins'] ?? 0,
+      carbs: nutrition['carbs'] ?? 0,
+      fat: nutrition['fats'] ?? 0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final ingredient = widget.ingredient;
     return Scaffold(
       body: SingleChildScrollView(
         child: Wrapper(
@@ -39,21 +74,19 @@ class EditIngredientsView extends StatelessWidget {
                             height: 40,
                           ),
                         ),
-                        Text(
-                          'edit_ingredients.edit_ingredients'.tr(),
-                          style: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'edit_ingredients.edit_ingredients'.tr(),
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Image.asset(
-                            'assets/icons/delete.png',
-                            height: 30,
-                          ),
-                        ),
+                        SizedBox(width: 40), // Placeholder for alignment
                       ],
                     ),
                   ),
@@ -64,11 +97,19 @@ class EditIngredientsView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          ingredient,
+                          ingredient.name,
                           style: GoogleFonts.poppins(
                             fontSize: 26,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          '${(_grams * _servings).toStringAsFixed(0)}g, ${(_createUpdatedIngredient().calories).toStringAsFixed(0)} kcal',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: Colors.grey[700],
                           ),
                         ),
                         SizedBox(height: 40.h(context)),
@@ -184,7 +225,21 @@ class EditIngredientsView extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 16),
-                              MeasurementSelector(),
+                              MeasurementSelector(
+                                onSelectionChanged: (index) {
+                                  setState(() {
+                                    _selectedMeasurement = index;
+                                    // Update grams based on measurement
+                                    switch (index) {
+                                      case 0: _grams = 5; break;  // tsp
+                                      case 1: _grams = 15; break; // tbsp
+                                      case 2: _grams = 240; break; // cup
+                                      case 3: _grams = 28; break; // ounce
+                                      default: _grams = 100;
+                                    }
+                                  });
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -203,7 +258,13 @@ class EditIngredientsView extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 12),
-                              ServingsInput(),
+                              ServingsInput(
+                                onServingsChanged: (servings) {
+                                  setState(() {
+                                    _servings = servings;
+                                  });
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -218,7 +279,8 @@ class EditIngredientsView extends StatelessWidget {
                       height: 56.h(context),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          final updatedIngredient = _createUpdatedIngredient();
+                          Navigator.pop(context, updatedIngredient);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -249,7 +311,8 @@ class EditIngredientsView extends StatelessWidget {
 }
 
 class MeasurementSelector extends StatefulWidget {
-  const MeasurementSelector({super.key});
+  const MeasurementSelector({super.key, required this.onSelectionChanged});
+  final Function(int) onSelectionChanged;
 
   @override
   State<MeasurementSelector> createState() => _MeasurementSelectorState();
@@ -283,6 +346,7 @@ class _MeasurementSelectorState extends State<MeasurementSelector> {
                 setState(() {
                   selected = index;
                 });
+                widget.onSelectionChanged(index);
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -319,14 +383,15 @@ class _MeasurementSelectorState extends State<MeasurementSelector> {
 }
 
 class ServingsInput extends StatefulWidget {
-  const ServingsInput({super.key});
+  const ServingsInput({super.key, required this.onServingsChanged});
+  final Function(double) onServingsChanged;
 
   @override
   State<ServingsInput> createState() => _ServingsInputState();
 }
 
 class _ServingsInputState extends State<ServingsInput> {
-  final TextEditingController _controller = TextEditingController(text: '2 ½');
+  final TextEditingController _controller = TextEditingController(text: '1');
   bool _editing = false;
 
   @override
@@ -370,10 +435,12 @@ class _ServingsInputState extends State<ServingsInput> {
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                     ),
-                    onSubmitted: (_) {
+                    onSubmitted: (value) {
                       setState(() {
                         _editing = false;
                       });
+                      final servings = double.tryParse(value) ?? 1.0;
+                      widget.onServingsChanged(servings);
                     },
                   ),
                 )

@@ -20,23 +20,42 @@ class ItemDetailView extends StatefulWidget {
 }
 
 class _ItemDetailViewState extends State<ItemDetailView> {
-  late List<String> _ingredients;
+  late List<Ingredient> _ingredients;
+  double _calories = 0;
+  double _protein = 0;
+  double _carbs = 0;
+  double _fat = 0;
   String? _editedMealName;
 
   @override
   void initState() {
     super.initState();
-    // Use meal.ingredients if available, fallback to empty list
-    _ingredients = (widget.meal.ingredients is List<String>)
-        ? List<String>.from(widget.meal.ingredients)
-        : (widget.meal.detailedIngredients != null && widget.meal.detailedIngredients is List)
-            ? List<String>.from(widget.meal.detailedIngredients!.map((e) => e.name))
-            : <String>[];
+    // Use meal.detailedIngredients if available, fallback to empty list
+    _ingredients = widget.meal.detailedIngredients ?? <Ingredient>[];
+    _recalculateMacros();
+  }
+
+  void _recalculateMacros() {
+    _calories = _ingredients.fold(0, (sum, ing) => sum + ing.calories);
+    _protein = _ingredients.fold(0, (sum, ing) => sum + ing.protein);
+    _carbs = _ingredients.fold(0, (sum, ing) => sum + ing.carbs);
+    _fat = _ingredients.fold(0, (sum, ing) => sum + ing.fat);
+  }
+
+  void _addIngredient(Ingredient ingredient) {
+    setState(() {
+      _ingredients.add(ingredient);
+      _recalculateMacros();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Meal updated!')),
+    );
   }
 
   void _deleteIngredient(int index) {
     setState(() {
       _ingredients.removeAt(index);
+      _recalculateMacros();
     });
   }
 
@@ -45,7 +64,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Remove Ingredient'),
-        content: Text('Are you sure you want to remove "${_ingredients[index]}"?'),
+        content: Text('Are you sure you want to remove "${_ingredients[index].name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -61,6 +80,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     if (shouldDelete == true) {
       setState(() {
         _ingredients.removeAt(index);
+        _recalculateMacros();
       });
     }
   }
@@ -173,7 +193,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                                         child: CustomPaint(
                                           size: const Size(300, 150),
                                           painter: CalorieGaugePainter(
-                                            fillPercent: (meal.calories / 2000).clamp(0.0, 1.0),
+                                            fillPercent: (_calories / 2000).clamp(0.0, 1.0),
                                             segments: 22,
                                             filledColor: Colors.black.withOpacity(0.7),
                                             unfilledColor: Color(0xff525151).withOpacity(.28),
@@ -189,7 +209,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                                         child: Column(
                                           children: [
                                             AppText(
-                                              meal.calories.toInt().toString(),
+                                              _calories.toInt().toString(),
                                               fontSize: 28,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600,
@@ -214,20 +234,20 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                                       children: [
                                         CalorieTrackerProgressBar(
                                           title: 'common.protein'.tr(),
-                                          value: (meal.protein / 90).clamp(0.0, 1.0),
-                                          overallValue: '${meal.protein.toInt()}/90g',
+                                          value: (_protein / 90).clamp(0.0, 1.0),
+                                          overallValue: '${_protein.toInt()}/90g',
                                           color: AppColors.greenColor,
                                         ),
                                         CalorieTrackerProgressBar(
                                           title: 'common.fats'.tr(),
-                                          value: (meal.fat / 70).clamp(0.0, 1.0),
-                                          overallValue: '${meal.fat.toInt()}/70g',
+                                          value: (_fat / 70).clamp(0.0, 1.0),
+                                          overallValue: '${_fat.toInt()}/70g',
                                           color: AppColors.redColor,
                                         ),
                                         CalorieTrackerProgressBar(
                                           title: 'common.carbs'.tr(),
-                                          value: (meal.carbs / 110).clamp(0.0, 1.0),
-                                          overallValue: '${meal.carbs.toInt()}/110g',
+                                          value: (_carbs / 110).clamp(0.0, 1.0),
+                                          overallValue: '${_carbs.toInt()}/110g',
                                           color: AppColors.yellowColor,
                                         ),
                                       ],
@@ -267,7 +287,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                                       ],
                                     ),
                                     child: Text(
-                                      _ingredients[index],
+                                      _ingredients[index].name,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500,
@@ -278,8 +298,13 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                               }),
                               // Add More Chip
                               GestureDetector(
-                                onTap: () {
-                                  context.push('/ingredients', extra: _ingredients);
+                                onTap: () async {
+                                  // Navigate to ingredients screen
+                                  final result = await context.push('/ingredients', extra: _ingredients);
+                                  // If we get an Ingredient back (from edit screen via rootNavigator), add it
+                                  if (result is Ingredient) {
+                                    _addIngredient(result);
+                                  }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
