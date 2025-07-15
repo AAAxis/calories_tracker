@@ -97,8 +97,8 @@ class AppRouter {
         path: '/item-detail',
         name: 'item_detail',
         builder: (context, state) {
-          final data = state.extra as RecentlyUploadedModel;
-          return ItemDetailView(data: data);
+          final meal = state.extra as Meal;
+          return ItemDetailView(meal: meal);
         },
       ),
       // Ingredients screen

@@ -290,6 +290,11 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void _updateRecentlyUploadedList() {
+    // DEBUG: Print all meals before mapping
+    print('DEBUG: Meals in _meals:');
+    for (final meal in _meals) {
+      print('id:  [32m${meal.id} [0m, imageUrl:  [34m${meal.imageUrl} [0m, localImagePath:  [34m${meal.localImagePath} [0m, calories:  [35m${meal.calories} [0m, protein: ${meal.protein}, fat: ${meal.fat}, carbs: ${meal.carbs}, isAnalyzing: ${meal.isAnalyzing}, analysisFailed: ${meal.analysisFailed}');
+    }
     // Include analyzing meals in the display but exclude failed ones
     final recentMeals = _meals
         .where((meal) => !meal.analysisFailed)  // Only exclude failed meals, keep analyzing ones

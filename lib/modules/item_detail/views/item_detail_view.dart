@@ -9,20 +9,108 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:calories_tracker/features/models/meal_model.dart';
 
-class ItemDetailView extends StatelessWidget {
-  const ItemDetailView({super.key, required this.data});
-  final RecentlyUploadedModel data;
+class ItemDetailView extends StatefulWidget {
+  const ItemDetailView({super.key, required this.meal});
+  final Meal meal;
+
+  @override
+  State<ItemDetailView> createState() => _ItemDetailViewState();
+}
+
+class _ItemDetailViewState extends State<ItemDetailView> {
+  late List<String> _ingredients;
+  String? _editedMealName;
+
+  @override
+  void initState() {
+    super.initState();
+    // Use meal.ingredients if available, fallback to empty list
+    _ingredients = (widget.meal.ingredients is List<String>)
+        ? List<String>.from(widget.meal.ingredients)
+        : (widget.meal.detailedIngredients != null && widget.meal.detailedIngredients is List)
+            ? List<String>.from(widget.meal.detailedIngredients!.map((e) => e.name))
+            : <String>[];
+  }
+
+  void _deleteIngredient(int index) {
+    setState(() {
+      _ingredients.removeAt(index);
+    });
+  }
+
+  void _deleteIngredientWithDialog(int index) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Remove Ingredient'),
+        content: Text('Are you sure you want to remove "${_ingredients[index]}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Remove'),
+          ),
+        ],
+      ),
+    );
+    if (shouldDelete == true) {
+      setState(() {
+        _ingredients.removeAt(index);
+      });
+    }
+  }
+
+  Future<void> _showRenameMealDialog() async {
+    final controller = TextEditingController(text: _editedMealName ?? widget.meal.getDisplayName());
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rename Meal'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(hintText: 'Enter new meal name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (result != null && result.isNotEmpty) {
+      setState(() {
+        _editedMealName = result;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Meal renamed to "$result"')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final meal = widget.meal;
     final h = MediaQuery.sizeOf(context).height;
     final w = MediaQuery.sizeOf(context).width;
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(data.image, width: w, height: h * .55, fit: BoxFit.cover),
-
+          (meal.imageUrl != null && meal.imageUrl!.isNotEmpty)
+              ? (meal.imageUrl!.startsWith('http')
+                  ? Image.network(meal.imageUrl!, width: w, height: h * .55, fit: BoxFit.cover)
+                  : Image.asset(meal.imageUrl!, width: w, height: h * .55, fit: BoxFit.cover))
+              : Container(width: w, height: h * .55, color: Colors.grey[200]),
           DraggableScrollableSheet(
             initialChildSize: 0.6,
             minChildSize: 0.6,
@@ -38,8 +126,7 @@ class ItemDetailView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: 10.h(context)),
-                    // Drag handle
+                    SizedBox(height: 10),
                     Container(
                       margin: const EdgeInsets.only(top: 8),
                       width: 80,
@@ -55,13 +142,13 @@ class ItemDetailView extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         children: [
                           Text(
-                            data.title,
+                            _editedMealName ?? meal.getDisplayName(),
                             style: GoogleFonts.poppins(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 15.h(context)),
+                          SizedBox(height: 15),
                           Container(
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
@@ -86,13 +173,10 @@ class ItemDetailView extends StatelessWidget {
                                         child: CustomPaint(
                                           size: const Size(300, 150),
                                           painter: CalorieGaugePainter(
-                                            fillPercent: .88,
+                                            fillPercent: (meal.calories / 2000).clamp(0.0, 1.0),
                                             segments: 22,
-                                            filledColor: Colors.black
-                                                .withOpacity(0.7),
-                                            unfilledColor: Color(
-                                              0xff525151,
-                                            ).withOpacity(.28),
+                                            filledColor: Colors.black.withOpacity(0.7),
+                                            unfilledColor: Color(0xff525151).withOpacity(.28),
                                             segmentHeight: 60.0,
                                             topWidth: 14.0,
                                             bottomWidth: 10.0,
@@ -101,11 +185,11 @@ class ItemDetailView extends StatelessWidget {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: 10.h(context),
+                                        bottom: 10,
                                         child: Column(
                                           children: [
                                             AppText(
-                                              '1721',
+                                              meal.calories.toInt().toString(),
                                               fontSize: 28,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600,
@@ -121,33 +205,29 @@ class ItemDetailView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 10.h(context)),
+                                  SizedBox(height: 10),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20.w(context),
-                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 20),
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         CalorieTrackerProgressBar(
                                           title: 'common.protein'.tr(),
-                                          value: 0.78,
-                                          overallValue: '78/90g',
+                                          value: (meal.protein / 90).clamp(0.0, 1.0),
+                                          overallValue: '${meal.protein.toInt()}/90g',
                                           color: AppColors.greenColor,
                                         ),
                                         CalorieTrackerProgressBar(
                                           title: 'common.fats'.tr(),
-                                          value: 0.5,
-                                          overallValue: '45/70g',
+                                          value: (meal.fat / 70).clamp(0.0, 1.0),
+                                          overallValue: '${meal.fat.toInt()}/70g',
                                           color: AppColors.redColor,
                                         ),
                                         CalorieTrackerProgressBar(
                                           title: 'common.carbs'.tr(),
-                                          value: 0.78,
-                                          overallValue: '78/110g',
+                                          value: (meal.carbs / 110).clamp(0.0, 1.0),
+                                          overallValue: '${meal.carbs.toInt()}/110g',
                                           color: AppColors.yellowColor,
                                         ),
                                       ],
@@ -157,8 +237,7 @@ class ItemDetailView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Add your content here
-                          SizedBox(height: 20.h(context)),
+                          SizedBox(height: 20),
                           Text(
                             'item_detail.ingredients'.tr(),
                             style: GoogleFonts.poppins(
@@ -166,9 +245,74 @@ class ItemDetailView extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 20.h(context)),
-                          IngredientButtons(),
-                          SizedBox(height: 20.h(context)),
+                          SizedBox(height: 20),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              ...List.generate(_ingredients.length, (index) {
+                                return GestureDetector(
+                                  onLongPress: () => _deleteIngredientWithDialog(index),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(.25),
+                                          blurRadius: 4,
+                                          offset: Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      _ingredients[index],
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                              // Add More Chip
+                              GestureDetector(
+                                onTap: () {
+                                  context.push('/ingredients', extra: _ingredients);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(.15),
+                                        blurRadius: 4,
+                                        offset: Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.add, color: Colors.grey),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Add More',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -196,114 +340,46 @@ class ItemDetailView extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
+                PopupMenuButton<String>(
                   icon: Image.asset('assets/icons/more.png', height: 40),
+                  onSelected: (value) {
+                    if (value == 'favorite') {
+                      // TODO: Implement add to favorites logic
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Added to favorites!')),
+                      );
+                    } else if (value == 'edit') {
+                      _showRenameMealDialog();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'favorite',
+                      child: Row(
+                        children: [
+                          Icon(Icons.favorite_border, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Add to favorites'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.black),
+                          SizedBox(width: 8),
+                          Text('Edit meal'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class IngredientButtons extends StatefulWidget {
-  const IngredientButtons({super.key});
-  @override
-  State<IngredientButtons> createState() => _IngredientButtonsState();
-}
-
-class _IngredientButtonsState extends State<IngredientButtons> {
-  int? selectedIndex;
-
-  List<String> getIngredients() {
-    return [
-      'item_detail.ingredients_list.buns'.tr(),
-      'item_detail.ingredients_list.cheese'.tr(),
-      'item_detail.ingredients_list.tomato'.tr(),
-      'item_detail.ingredients_list.beef'.tr(),
-      'item_detail.ingredients_list.onion'.tr(),
-      'item_detail.ingredients_list.lettuce'.tr(),
-      'item_detail.ingredients_list.pickles'.tr(),
-      'item_detail.ingredients_list.mustard'.tr(),
-      'item_detail.ingredients_list.ketchup'.tr(),
-    ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ingredients = getIngredients();
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: [
-        ...List.generate(ingredients.length, (index) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.25),
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Text(
-                ingredients[index],
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          );
-        }),
-        // Add More Button
-        GestureDetector(
-          onTap: () {
-            context.push('/ingredients');
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(.25),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add, color: Colors.grey),
-                SizedBox(width: 4),
-                Text(
-                  'item_detail.add_more'.tr(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

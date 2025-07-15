@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'dart:io';
+import 'package:calories_tracker/features/models/meal_model.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({super.key});
@@ -211,7 +212,17 @@ class DashboardContent extends StatelessWidget {
                               padding: const EdgeInsets.all(2.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  context.push('/item-detail', extra: data);
+                                  Meal? meal;
+                                  try {
+                                    meal = dashboardProvider.meals.firstWhere((m) => m.id == data.mealId);
+                                  } catch (_) {
+                                    meal = null;
+                                  }
+                                  if (meal != null) {
+                                    context.push('/item-detail', extra: meal);
+                                  } else {
+                                    print('Meal not found for id:  [31m${data.mealId} [0m');
+                                  }
                                 },
                                 onLongPress: () {
                                   if (data.mealId != null) {

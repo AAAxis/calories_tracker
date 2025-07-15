@@ -24,9 +24,9 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case itemDetail:
-        final data = settings.arguments as dynamic;
+        final meal = settings.arguments as dynamic;
         return MaterialPageRoute(
-          builder: (context) => ItemDetailView(data: data),
+          builder: (context) => ItemDetailView(meal: meal),
         );
       case editIngredients:
         final ingredient = settings.arguments as dynamic;
