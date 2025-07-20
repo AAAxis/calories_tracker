@@ -10,6 +10,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:calories_tracker/features/models/meal_model.dart';
+import 'package:calories_tracker/core/services/image_cache_service.dart';
+import 'package:calories_tracker/core/services/translation_service.dart';
+import 'package:calories_tracker/providers/dashboard_provider.dart';
+import 'package:provider/provider.dart';
 
 class ItemDetailView extends StatefulWidget {
   const ItemDetailView({super.key, required this.meal});
@@ -32,14 +36,133 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     super.initState();
     // Use meal.detailedIngredients if available, fallback to empty list
     _ingredients = widget.meal.detailedIngredients ?? <Ingredient>[];
-    _recalculateMacros();
+    
+    // Initialize macros with meal's values first
+    _calories = widget.meal.calories;
+    _protein = widget.meal.protein;
+    _carbs = widget.meal.carbs;
+    _fat = widget.meal.fat;
+    
+    // Only recalculate if we have detailed ingredients
+    if (_ingredients.isNotEmpty) {
+      _recalculateMacros();
+    }
   }
 
   void _recalculateMacros() {
-    _calories = _ingredients.fold(0, (sum, ing) => sum + ing.calories);
-    _protein = _ingredients.fold(0, (sum, ing) => sum + ing.protein);
-    _carbs = _ingredients.fold(0, (sum, ing) => sum + ing.carbs);
-    _fat = _ingredients.fold(0, (sum, ing) => sum + ing.fat);
+    if (_ingredients.isNotEmpty) {
+      // Recalculate from ingredients
+      _calories = _ingredients.fold(0, (sum, ing) => sum + ing.calories);
+      _protein = _ingredients.fold(0, (sum, ing) => sum + ing.protein);
+      _carbs = _ingredients.fold(0, (sum, ing) => sum + ing.carbs);
+      _fat = _ingredients.fold(0, (sum, ing) => sum + ing.fat);
+    } else {
+      // Use meal's original values if no detailed ingredients
+      _calories = widget.meal.calories;
+      _protein = widget.meal.protein;
+      _carbs = widget.meal.carbs;
+      _fat = widget.meal.fat;
+    }
+    
+    // Update the meal in the dashboard
+    _updateMealInDashboard();
+  }
+
+  void _updateMealInDashboard() {
+    try {
+      final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+      
+      // Create updated meal with new nutrition values and ingredients
+      final updatedMeal = Meal(
+        id: widget.meal.id,
+        name: _editedMealName ?? widget.meal.name, // Required name parameter
+        imageUrl: widget.meal.imageUrl,
+        localImagePath: widget.meal.localImagePath,
+        timestamp: widget.meal.timestamp,
+        userId: widget.meal.userId,
+        calories: _calories,
+        protein: _protein,
+        fat: _fat,
+        carbs: _carbs,
+        detailedIngredients: _ingredients,
+        mealName: _editedMealName, // Use edited name if available
+        isAnalyzing: false,
+        analysisFailed: false,
+      );
+      
+      // Update the meal in dashboard provider
+      final updatedMeals = dashboardProvider.meals.map((meal) {
+        if (meal.id == widget.meal.id) {
+          return updatedMeal;
+        }
+        return meal;
+      }).toList();
+      
+      // Save updated meal to local storage
+      Meal.updateInLocalStorage(updatedMeal);
+      
+      // Update dashboard provider
+      dashboardProvider.updateMeals(updatedMeals);
+      
+      print('✅ Updated meal in dashboard: ${updatedMeal.calories} calories, ${_ingredients.length} ingredients');
+    } catch (e) {
+      print('❌ Error updating meal in dashboard: $e');
+    }
+  }
+
+  Widget _buildMealImage(Meal meal, double w, double h) {
+    // Try to find a valid image source
+    String? imageSource;
+    if (meal.imageUrl != null && meal.imageUrl!.isNotEmpty) {
+      imageSource = meal.imageUrl!;
+    } else if (meal.localImagePath != null && meal.localImagePath!.isNotEmpty) {
+      imageSource = meal.localImagePath!;
+    }
+
+    if (imageSource == null || imageSource.isEmpty) {
+      return Container(
+        width: w,
+        height: h * .65,
+        color: Colors.grey[200],
+        child: Icon(
+          Icons.restaurant,
+          color: Colors.grey[400],
+          size: 64,
+        ),
+      );
+    }
+
+    return ImageCacheService.getCachedImage(
+      imageSource,
+      width: w,
+      height: h * .75,
+      fit: BoxFit.cover,
+      placeholder: Container(
+        width: w,
+        height: h * .65,
+        color: Colors.grey[200],
+        child: Center(
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+            ),
+          ),
+        ),
+      ),
+      errorWidget: Container(
+        width: w,
+        height: h * .65,
+        color: Colors.grey[200],
+        child: Icon(
+          Icons.broken_image,
+          color: Colors.grey[400],
+          size: 64,
+        ),
+      ),
+    );
   }
 
   void _addIngredient(Ingredient ingredient) {
@@ -48,7 +171,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
       _recalculateMacros();
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Meal updated!')),
+      SnackBar(content: Text('item_detail.meal_updated'.tr())),
     );
   }
 
@@ -60,19 +183,25 @@ class _ItemDetailViewState extends State<ItemDetailView> {
   }
 
   void _deleteIngredientWithDialog(int index) async {
+    // Get translated ingredient name for the dialog
+    final translatedIngredientNames = await _getTranslatedIngredients();
+    final ingredientName = index < translatedIngredientNames.length 
+        ? translatedIngredientNames[index] 
+        : _ingredients[index].name;
+    
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Remove Ingredient'),
-        content: Text('Are you sure you want to remove "${_ingredients[index].name}"?'),
+        title: Text('item_detail.remove_ingredient'.tr()),
+        content: Text('${'item_detail.remove_ingredient_question'.tr()} "$ingredientName"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
+            child: Text('item_detail.cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Remove'),
+            child: Text('item_detail.remove'.tr()),
           ),
         ],
       ),
@@ -90,20 +219,20 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Rename Meal'),
+        title: Text('item_detail.rename_meal'.tr()),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: InputDecoration(hintText: 'Enter new meal name'),
+          decoration: InputDecoration(hintText: 'item_detail.enter_new_meal_name'.tr()),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            child: Text('common.cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: Text('Save'),
+            child: Text('common.save'.tr()),
           ),
         ],
       ),
@@ -112,9 +241,65 @@ class _ItemDetailViewState extends State<ItemDetailView> {
       setState(() {
         _editedMealName = result;
       });
+      
+      // Update the meal in dashboard with new name
+      _updateMealInDashboard();
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Meal renamed to "$result"')),
+        SnackBar(content: Text('${'item_detail.meal_renamed_to'.tr()} "$result"')),
       );
+    }
+  }
+
+  /// Get translated meal name based on current locale
+  Future<String> _getTranslatedMealName() async {
+    try {
+      final locale = context.locale.languageCode;
+      
+      // If already in English, use existing method
+      if (locale == 'en') {
+        return _editedMealName ?? widget.meal.getDisplayName();
+      }
+      
+      // Get the original English meal name
+      final englishMealName = _editedMealName ?? widget.meal.getDisplayName('en');
+      
+      // Translate using TranslationService
+      final translatedName = await TranslationService.translateIngredient(
+        englishMealName,
+        locale,
+      );
+      
+      return translatedName;
+    } catch (e) {
+      print('❌ Error translating meal name: $e');
+      return _editedMealName ?? widget.meal.getDisplayName();
+    }
+  }
+
+  /// Get translated ingredients based on current locale
+  Future<List<String>> _getTranslatedIngredients() async {
+    try {
+      final locale = context.locale.languageCode;
+      
+      // If already in English, use existing method
+      if (locale == 'en') {
+        return _ingredients.map((ing) => ing.name).toList();
+      }
+      
+      // Get English ingredient names
+      final englishIngredients = _ingredients.map((ing) => ing.name).toList();
+      
+      // Translate using TranslationService
+      final translatedIngredients = await TranslationService.translateIngredients(
+        englishIngredients,
+        locale,
+      );
+      
+      return translatedIngredients;
+    } catch (e) {
+      print('❌ Error translating ingredients: $e');
+      return _ingredients.map((ing) => ing.name).toList();
     }
   }
 
@@ -126,11 +311,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     return Scaffold(
       body: Stack(
         children: [
-          (meal.imageUrl != null && meal.imageUrl!.isNotEmpty)
-              ? (meal.imageUrl!.startsWith('http')
-                  ? Image.network(meal.imageUrl!, width: w, height: h * .55, fit: BoxFit.cover)
-                  : Image.asset(meal.imageUrl!, width: w, height: h * .55, fit: BoxFit.cover))
-              : Container(width: w, height: h * .55, color: Colors.grey[200]),
+          _buildMealImage(meal, w, h),
           DraggableScrollableSheet(
             initialChildSize: 0.6,
             minChildSize: 0.6,
@@ -161,12 +342,18 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                         controller: scrollController,
                         padding: const EdgeInsets.all(20),
                         children: [
-                          Text(
-                            _editedMealName ?? meal.getDisplayName(),
-                            style: GoogleFonts.poppins(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          FutureBuilder<String>(
+                            future: _getTranslatedMealName(),
+                            builder: (context, snapshot) {
+                              final mealName = snapshot.data ?? (_editedMealName ?? widget.meal.getDisplayName());
+                              return Text(
+                                mealName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(height: 15),
                           Container(
@@ -266,76 +453,83 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
-                            children: [
-                              ...List.generate(_ingredients.length, (index) {
-                                return GestureDetector(
-                                  onLongPress: () => _deleteIngredientWithDialog(index),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(.25),
-                                          blurRadius: 4,
-                                          offset: Offset(0, 4),
+                          FutureBuilder<List<String>>(
+                            future: _getTranslatedIngredients(),
+                            builder: (context, snapshot) {
+                              final translatedIngredients = snapshot.data ?? _ingredients.map((ing) => ing.name).toList();
+                              
+                              return Wrap(
+                                spacing: 12,
+                                runSpacing: 12,
+                                children: [
+                                  ...List.generate(translatedIngredients.length, (index) {
+                                    return GestureDetector(
+                                      onLongPress: () => _deleteIngredientWithDialog(index),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(.25),
+                                              blurRadius: 4,
+                                              offset: Offset(0, 4),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      _ingredients[index].name,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              // Add More Chip
-                              GestureDetector(
-                                onTap: () async {
-                                  // Navigate to ingredients screen
-                                  final result = await context.push('/ingredients', extra: _ingredients);
-                                  // If we get an Ingredient back (from edit screen via rootNavigator), add it
-                                  if (result is Ingredient) {
-                                    _addIngredient(result);
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(.15),
-                                        blurRadius: 4,
-                                        offset: Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.add, color: Colors.grey),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        'Add More',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w700,
+                                        child: Text(
+                                          translatedIngredients[index],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ],
+                                    );
+                                  }),
+                                  // Add More Chip
+                                  GestureDetector(
+                                    onTap: () async {
+                                      // Navigate to ingredients screen
+                                      final result = await context.push('/ingredients', extra: _ingredients);
+                                      // If we get an Ingredient back (from edit screen via rootNavigator), add it
+                                      if (result is Ingredient) {
+                                        _addIngredient(result);
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(.15),
+                                            blurRadius: 4,
+                                            offset: Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.add, size: 16, color: Colors.black),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            'item_detail.add_more'.tr(),
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
+                                ],
+                              );
+                            },
                           ),
                           SizedBox(height: 20),
                         ],
@@ -353,6 +547,8 @@ class _ItemDetailViewState extends State<ItemDetailView> {
               children: [
                 IconButton(
                   onPressed: () {
+                    // Ensure final update before leaving
+                    _updateMealInDashboard();
                     Navigator.pop(context);
                   },
                   icon: Image.asset('assets/icons/back.png', height: 40),
@@ -371,7 +567,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                     if (value == 'favorite') {
                       // TODO: Implement add to favorites logic
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Added to favorites!')),
+                        SnackBar(content: Text('item_detail.added_to_favorites'.tr())),
                       );
                     } else if (value == 'edit') {
                       _showRenameMealDialog();
@@ -384,7 +580,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                         children: [
                           Icon(Icons.favorite_border, color: Colors.red),
                           SizedBox(width: 8),
-                          Text('Add to favorites'),
+                          Text('item_detail.add_to_favorites'.tr()),
                         ],
                       ),
                     ),
@@ -394,7 +590,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                         children: [
                           Icon(Icons.edit, color: Colors.black),
                           SizedBox(width: 8),
-                          Text('Edit meal'),
+                          Text('item_detail.edit_meal'.tr()),
                         ],
                       ),
                     ),

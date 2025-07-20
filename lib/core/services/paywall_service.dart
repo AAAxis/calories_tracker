@@ -15,6 +15,7 @@ class RevenueCatConfig {
   // Your configured offering IDs from RevenueCat dashboard
   static const String defaultOfferingId = 'Sale';
   static const String discountOfferingId = 'Offer';
+  static const String proOfferingId = 'Pro';
 
   // Subscription terms and conditions
   static const footerText =
@@ -52,6 +53,7 @@ class PaywallService {
   static String get entitlementID => RevenueCatConfig.entitlementID;
   static String get defaultOfferingId => RevenueCatConfig.defaultOfferingId;
   static String get discountOfferingId => RevenueCatConfig.discountOfferingId;
+  static String get proOfferingId => RevenueCatConfig.proOfferingId;
   static String get appleApiKey => RevenueCatConfig.appleApiKey;
   static String get googleApiKey => RevenueCatConfig.googleApiKey;
   static String get amazonApiKey => RevenueCatConfig.amazonApiKey;
@@ -138,6 +140,34 @@ class PaywallService {
     } catch (e) {
       print('❌ Unexpected error showing paywall: $e');
       return false;
+    }
+  }
+
+  // Show RevenueCat remote paywall with referral code consideration
+  static Future<bool> showPaywallWithReferral(BuildContext context, {String? referralCode}) async {
+    try {
+      print('🔍 Showing paywall with referral consideration...');
+      print('🎯 Referral code: ${referralCode ?? 'none'}');
+
+      // If referral code is provided, set the custom attribute first
+      if (referralCode != null) {
+        await Purchases.setAttributes({
+          'referral_code_used': referralCode,
+        });
+        print('✅ Set RevenueCat custom attribute: referral_code_used = $referralCode');
+      }
+
+      // Let RevenueCat determine which offering to show based on the custom attributes
+      // RevenueCat will use your dashboard rules to decide which offering to present
+      print('🎯 Letting RevenueCat determine offering based on custom attributes');
+
+      // Show the paywall without specifying an offering - let RevenueCat decide
+      return await showPaywall(context);
+
+    } catch (e) {
+      print('❌ Error showing paywall with referral: $e');
+      // Fallback to regular paywall
+      return await showPaywall(context);
     }
   }
 
@@ -353,6 +383,58 @@ class PaywallService {
     } catch (e) {
       print('❌ Error showing custom paywall: $e');
       return false;
+    }
+  }
+
+  // Get current customer's custom attributes
+  static Future<Map<String, String>> getCustomerAttributes() async {
+    try {
+      final customerInfo = await Purchases.getCustomerInfo();
+      // Note: RevenueCat doesn't directly expose custom attributes in Flutter SDK
+      // This is a placeholder - you might need to track attributes separately
+      // or use the RevenueCat REST API to fetch them
+      return {};
+    } catch (e) {
+      print('❌ Error getting customer attributes: $e');
+      return {};
+    }
+  }
+
+  // Check if customer has specific referral code attribute
+  static Future<bool> hasReferralCode(String code) async {
+    try {
+      // Since RevenueCat Flutter SDK doesn't expose custom attributes directly,
+      // you might need to store this information locally or use REST API
+      // For now, we'll assume the attribute was set if the code was used in this session
+      return true; // Placeholder implementation
+    } catch (e) {
+      print('❌ Error checking referral code: $e');
+      return false;
+    }
+  }
+
+  // Debug method to check what offering RevenueCat would show
+  static Future<void> debugCurrentOffering() async {
+    try {
+      print('🔍 Debug: Checking current offering from RevenueCat...');
+      
+      final offerings = await Purchases.getOfferings();
+      final currentOffering = offerings.current;
+      
+      print('🔍 Current offering: ${currentOffering?.identifier ?? 'none'}');
+      print('🔍 Available offerings:');
+      for (var entry in offerings.all.entries) {
+        print('  - ${entry.key}: ${entry.value.identifier}');
+        print('    Packages: ${entry.value.availablePackages.map((p) => p.identifier).join(', ')}');
+      }
+      
+      // Also check customer info
+      final customerInfo = await Purchases.getCustomerInfo();
+      print('🔍 Customer ID: ${customerInfo.originalAppUserId}');
+      print('🔍 Active entitlements: ${customerInfo.entitlements.active.keys.join(', ')}');
+      
+    } catch (e) {
+      print('❌ Error checking current offering: $e');
     }
   }
 }

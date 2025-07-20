@@ -307,29 +307,29 @@ class OpenAIService {
     }
   }
   
-  /// Parse calories from Firebase response
+  /// Parse calories from Firebase response with better validation
   static double _parseCalories(dynamic calories) {
     if (calories is num) {
       final caloriesValue = calories.toDouble();
-      if (caloriesValue == 0) {
-        print('⚠️ Calories from Firebase is 0, using default 200');
-        return 200.0;
+      if (caloriesValue <= 0 || caloriesValue > 10000) {
+        print('⚠️ Invalid calories value: $caloriesValue, using default 250');
+        return 250.0;
       }
       return caloriesValue;
     }
     if (calories is String) {
       final parsed = double.tryParse(calories) ?? 0.0;
-      if (parsed == 0) {
-        print('⚠️ Parsed calories is 0, using default 200');
-        return 200.0;
+      if (parsed <= 0 || parsed > 10000) {
+        print('⚠️ Invalid parsed calories: $parsed, using default 250');
+        return 250.0;
       }
       return parsed;
     }
-    print('⚠️ Invalid calories format, using default 200');
-    return 200.0;
+    print('⚠️ Invalid calories format, using default 250');
+    return 250.0;
   }
   
-  /// Parse macros from Firebase response (handles "Xg" format)
+  /// Parse macros from Firebase response (handles "Xg" format) with fallback estimation
   static Map<String, double> _parseMacros(dynamic macros) {
     final result = <String, double>{
       'proteins': 0.0,
@@ -344,7 +344,22 @@ class OpenAIService {
       result['proteins'] = _parseGramValue(macrosMap['proteins']);
       result['carbs'] = _parseGramValue(macrosMap['carbohydrates'] ?? macrosMap['carbs']);
       result['fats'] = _parseGramValue(macrosMap['fats']);
+      
+      print('🔍 Parsed macros: ${result}');
     }
+    
+    // Check for incomplete macro data - keep zeros instead of estimating fake values
+    final totalMacros = result['proteins']! + result['carbs']! + result['fats']!;
+    
+    if (totalMacros == 0) {
+      print('⚠️ No macro data available from analysis - keeping zeros');
+      // Don't estimate fake values, let UI handle displaying "No data"
+    } else if (result['proteins'] == 0 && result['fats'] == 0 && result['carbs']! > 0) {
+      print('⚠️ Partial macro data - only carbs available from analysis');
+      // Keep real carbs, zero protein/fat to show incomplete data
+    }
+    
+    print('🔍 Final macros: proteins: ${result['proteins']}g, carbs: ${result['carbs']}g, fats: ${result['fats']}g');
     
     return result;
   }
@@ -360,6 +375,47 @@ class OpenAIService {
       return double.tryParse(cleanValue) ?? 0.0;
     }
     return 0.0;
+  }
+
+  /// Estimate missing macro values based on typical meal ratios
+  static Map<String, double> _estimateMissingMacros(Map<String, double> existingMacros, [dynamic originalMacros]) {
+    final protein = existingMacros['proteins'] ?? 0.0;
+    final carbs = existingMacros['carbs'] ?? 0.0;
+    final fats = existingMacros['fats'] ?? 0.0;
+    
+    // If we have carbs but missing protein/fat, estimate typical meal ratios
+    if (carbs > 0 && protein == 0 && fats == 0) {
+      // Typical meal: 25% protein, 45% carbs, 30% fat (by calories)
+      // 1g protein = 4 cal, 1g carbs = 4 cal, 1g fat = 9 cal
+      final carbCalories = carbs * 4;
+      final totalCalories = carbCalories / 0.45; // If carbs are 45% of calories
+      
+      final proteinCalories = totalCalories * 0.25;
+      final fatCalories = totalCalories * 0.30;
+      
+      final estimatedProtein = proteinCalories / 4;
+      final estimatedFat = fatCalories / 9;
+      
+      print('🔧 Estimated macros: protein: ${estimatedProtein.toStringAsFixed(1)}g, fat: ${estimatedFat.toStringAsFixed(1)}g');
+      
+      return {
+        'proteins': estimatedProtein,
+        'carbs': carbs, // Keep existing carbs
+        'fats': estimatedFat,
+      };
+    }
+    
+    // If all macros are missing, provide basic estimates
+    if (protein == 0 && carbs == 0 && fats == 0) {
+      return {
+        'proteins': 15.0, // Basic protein estimate
+        'carbs': 30.0,    // Basic carbs estimate  
+        'fats': 10.0,     // Basic fat estimate
+      };
+    }
+    
+    // Return original if no estimation needed
+    return existingMacros;
   }
   
   /// Parse detailed ingredients from Firebase response

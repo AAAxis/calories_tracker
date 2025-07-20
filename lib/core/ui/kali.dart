@@ -21,9 +21,6 @@ class KaliApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-            create: (_) => WizardProvider(totalScreens: 18),
-          ),
           ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ],
         child: PopScope(

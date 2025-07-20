@@ -1,4 +1,26 @@
 {
+  "onboarding": {
+    "effortless_calorie_tracking": "מעקב קלוריות ללא מאמץ",
+    "snap_meal": "צלם תמונה של הארוחה שלך וקבל ניתוח תזונה מיידי",
+    "continue": "המשך"
+  },
+  "onboarding2": {
+    "skip": "דלג",
+    "scanning": "סורק...",
+    "rib_eye_steak": "סטייק ריב איי",
+    "kcal": "קלוריות",
+    "protein": "חלבון",
+    "fats": "שומנים",
+    "carbs": "פחמימות",
+    "continue": "המשך"
+  },
+  "onboarding3": {
+    "weight_goal": "מטרת משקל",
+    "weight_value": "75 ק\"ג",
+    "transform_body": "שנה את הגוף שלך עם מעקב תזונה מבוסס בינה מלאכותית",
+    "start_today": "התחל את המסע שלך היום",
+    "get_started": "התחל"
+  },
   "wizard": {
     "how_old_are_you": "בן כמה אתה?",
     "choose_language": "בחר את השפה שלך",
@@ -141,17 +163,178 @@
   "profile": {
     "my_profile": "הפרופיל שלי",
     "personal_information": "מידע אישי",
+    "subscriptions": "מנויים",
+    "language": "שפה",
+    "privacy_policy": "מדיניות פרטיות",
     "my_meals": "הארוחות שלי",
     "nutrition_report": "דוח תזונה",
     "favorites_food": "מזון מועדף",
     "log_out": "התנתק",
-    "error_during_logout": "שגיאה במהלך התנתקות: "
+    "error_during_logout": "שגיאה במהלך התנתקות: ",
+    "select_language": "בחר שפה",
+    "cancel": "ביטול",
+    "error_opening_subscriptions": "לא ניתן לפתוח הגדרות מנוי",
+    "error_opening_privacy": "לא ניתן לפתוח מדיניות פרטיות",
+    "image_uploaded_successfully": "תמונת פרופיל הועלתה בהצלחה!",
+    "image_upload_failed": "שגיאה בהעלאת התמונה. אנא נסה שוב."
+  },
+  "wizard_hear_about_us": {
+    "app_title": "קאליאי",
+    "where_did_you_hear": "איפה שמעת עלינו?",
+    "subtitle": "זה עוזר לנו להבין איך אנשים מגלים את האפליקציה שלנו",
+    "instagram": "אינסטגרם",
+    "facebook": "פייסבוק",
+    "website": "אתר אינטרנט",
+    "tiktok": "טיקטוק",
+    "continue": "המשך"
+  },
+  "wizard_gender": {
+    "title": "מה המין שלך?",
+    "subtitle": "זה עוזר לנו להתאים אישית את החוויה שלך",
+    "male": "זכר",
+    "female": "נקבה",
+    "other": "אחר",
+    "continue": "המשך"
+  },
+  "wizard_weight": {
+    "title": "מה המשקל הנוכחי שלך?",
+    "subtitle": "הזן את המשקל הנוכחי שלך",
+    "lbs": "פאונד",
+    "kgs": "ק\"ג",
+    "kg": "ק\"ג",
+    "lb": "פאונד",
+    "continue": "המשך"
+  },
+  "wizard_height": {
+    "title": "מה הגובה שלך?",
+    "subtitle": "הזן את הגובה שלך",
+    "inches": "אינץ'",
+    "cm": "ס\"מ",
+    "continue": "המשך"
+  },
+  "wizard_age": {
+    "title": "בן כמה אתה?",
+    "subtitle": "הזן את הגיל שלך",
+    "continue": "המשך"
+  },
+  "wizard_goal_type": {
+    "title": "מה המטרה העיקרית שלך?",
+    "subtitle": "בחר את מטרת הכושר הראשית שלך",
+    "lose_weight": "לרדת במשקל",
+    "maintain_weight": "לשמור על המשקל",
+    "gain_weight": "לעלות במשקל",
+    "continue": "המשך"
+  },
+  "wizard_diet_type": {
+    "title": "מה סוג הדיאטה שלך?",
+    "subtitle": "בחר את העדפות התזונה שלך",
+    "regular": "רגילה",
+    "vegetarian": "צמחונית",
+    "vegan": "טבעונית",
+    "keto": "קטו",
+    "continue": "המשך"
+  },
+  "wizard_workout": {
+    "title": "כמה פעמים אתה מתאמן?",
+    "subtitle": "בחר את תדירות האימון שלך",
+    "option_0_2": "0-2 פעמים בשבוע",
+    "option_2_4": "2-4 פעמים בשבוע",
+    "option_4_6": "4-6 פעמים בשבוע",
+    "option_6_8": "6-8 פעמים בשבוע",
+    "continue": "המשך"
+  },
+  "wizard_motivation_achievement": {
+    "losing": "ירידה",
+    "gaining": "עלייה",
+    "kg": "ק\"ג",
+    "gain_message": "עלייה במשקל בצורה בריאה",
+    "lose_message": "ירידה במשקל בצורה בריאה",
+    "continue": "המשך"
+  },
+  "wizard_how_fast": {
+    "title": "באיזה מהירות אתה רוצה להגיע למטרה?",
+    "subtitle": "בחר את הקצב המועדף עליך",
+    "kg_per_week": "ק\"ג בשבוע",
+    "slow": "איטי ויציב",
+    "medium": "בינוני",
+    "fast": "מהיר",
+    "advice_lose_good": "ירידה הדרגתית במשקל יותר ברת קיימא",
+    "continue": "המשך"
+  },
+  "wizard_loading_page": {
+    "building_message": "אנחנו בונים את התוכנית האישית שלך..."
+  },
+  "wizard_referral": {
+    "title": "יש לך קוד הפניה?",
+    "applied": "הוחל!",
+    "submit": "החל"
+  },
+  "wizard_great_potential": {
+    "title": "יש לך פוטנציאל גדול!",
+    "how_to_reach_goals": "איך להגיע למטרות שלך:",
+    "consistency_tip": "עקביות היא המפתח להגיע למטרות שלך",
+    "continue": "המשך"
+  },
+  "wizard_summary": {
+    "how_to_reach_goals": "איך להגיע למטרות שלך:",
+    "goal_tip_1": "עקוב אחר הארוחות שלך מדי יום",
+    "goal_tip_2": "הישאר בגבולות הקלוריות שלך",
+    "goal_tip_3": "התאמן באופן קבוע",
+    "goal_tip_4": "הישאר עם לחות"
+  },
+  "wizard_notification": {
+    "title": "אפשר התראות",
+    "description": "קבל תזכורות לעקוב אחר הארוחות שלך ולהישאר על המסלול",
+    "dont_allow": "אל תאפשר",
+    "allow": "אפשר התראות",
+    "settings_note": "אתה יכול לשנות זאת בהגדרות מאוחר יותר",
+    "continue": "המשך"
+  },
+  "wizard_recommendation": {
+    "title": "מה המשתמשים שלנו אומרים",
+    "rating": "4.8 כוכבים",
+    "total_reviews": "2,500+ ביקורות",
+    "review_1_name": "שרה מ.",
+    "review_1_text": "האפליקציה הזו עזרה לי לרדת 7 קילו ב-3 חודשים!",
+    "review_2_name": "יוחנן ד.",
+    "review_2_text": "פשוט ויעיל. אוהב את תכונת מעקב הארוחות.",
+    "continue": "המשך"
+  },
+  "wizard_upload_image": {
+    "title": "העלה את התמונה שלך",
+    "add_photo": "הוסף תמונה",
+    "skip_for_now": "דלג בינתיים",
+    "continue": "המשך"
+  },
+  "wizard_dream_weight": {
+    "title": "מה המשקל החלום שלך?",
+    "subtitle": "הזן את יעד המשקל שלך",
+    "lbs": "פאונד",
+    "kgs": "ק\"ג",
+    "kg": "ק\"ג",
+    "lb": "פאונד",
+    "continue": "המשך"
+  },
+  "wizard_account_summary": {
+    "title": "סיכום חשבון",
+    "description": "התוכנית האישית שלך מוכנה!"
   },
   "item_detail": {
+    "add_to_favorites": "הוסף למועדפים",
+    "edit_meal": "ערוך ארוחה",
+    "rename_meal": "שנה שם ארוחה",
+    "enter_new_meal_name": "הכנס שם ארוחה חדש",
+    "meal_updated": "הארוחה עודכנה!",
+    "added_to_favorites": "נוסף למועדפים!",
+    "meal_renamed_to": "הארוחה שונתה ל",
     "meal_calories": "קלוריות ארוחה",
     "ingredients": "מרכיבים",
     "nutrition": "תזונה",
     "add_more": "הוסף עוד",
+    "remove_ingredient": "הסר מרכיב",
+    "remove_ingredient_question": "האם אתה בטוח שברצונך להסיר את",
+    "cancel": "ביטול",
+    "remove": "הסר",
     "ingredients_list": {
       "buns": "לחמניות",
       "cheese": "גבינה",
@@ -168,6 +351,9 @@
     "suggestions": "הצעות",
     "search_hint": "חפש כל מרכיב",
     "add_ingredients": "הוסף מרכיבים",
+    "search_results": "תוצאות חיפוש",
+    "no_results": "לא נמצאו מרכיבים",
+    "try_different_search": "נסה לחפש במילות מפתח אחרות",
     "ingredients_list": {
       "plain_yogurt": "יוגורט רגיל",
       "peanut_butter": "חמאת בוטנים",
@@ -222,6 +408,7 @@
     "add": "הוסף",
     "user_data": "נתוני משתמש",
     "email": "כתובת דוא\"ל",
+    "user_email": "כתובת דוא\"ל",
     "display_name": "שם תצוגה",
     "diet_type": "סוג תזונה",
     "health_goal": "מטרת בריאות",
@@ -260,7 +447,12 @@
     "restart_wizard": "הפעל מחדש את ההגדרות",
     "restart_wizard_confirm": "האם אתה בטוח שברצונך להפעיל מחדש את תהליך ההגדרה? ההגדרות הנוכחיות שלך יאופסו.",
     "restart": "הפעל מחדש",
-    "restart_wizard_description": "התחל את תהליך ההגדרה מחדש כדי לעדכן את היעדים וההעדפות שלך"
+    "restart_wizard_description": "התחל את תהליך ההגדרה מחדש כדי לעדכן את היעדים וההעדפות שלך",
+    "view_wizard_data": "צפה בנתוני האשף",
+    "view_wizard_data_description": "הצג את כל נתוני האשף כ-JSON",
+    "complete_dashboard": "השלם הגדרת לוח בקרה",
+    "dashboard_completed": "לוח הבקרה הושלם! כעת תוכל לגשת לתכונות אחרות.",
+    "show_all": "הצג הכל"
   },
   "notifications": {
     "notifications": "התראות",
@@ -905,9 +1097,158 @@
     "apple_sign_in_failed": "התחברות עם Apple נכשלה",
     "google_sign_in_failed": "התחברות עם Google נכשלה"
   },
+  "wizard_loading_page": {
+    "building_message": "בונים את התוכנית האישית שלך...",
+    "daily_recommendations": "המלצות יומיות",
+    "recommendation_1": "עקוב אחר צריכת הקלוריות היומית שלך",
+    "recommendation_2": "אכול ארוחות מאוזנות עם מקרו נכונים",
+    "recommendation_3": "שתה מספיק מים במהלך היום",
+    "recommendation_4": "התאמן בקביעות כדי להגיע למטרות שלך",
+    "recommendation_5": "עקוב אחר ההתקדמות שלך באופן עקבי",
+    "status_initializing": "מאתחל את הפרופיל שלך...",
+    "status_analyzing": "מנתח את הנתונים שלך...",
+    "status_calculating": "מחשב את המטרות שלך...",
+    "status_optimizing": "מייעל את התוכנית שלך...",
+    "status_finalizing": "משלים את ההמלצות...",
+    "status_almost_ready": "כמעט מוכן...",
+    "status_ready": "התוכנית שלך מוכנה!",
+    "continue": "המשך"
+  },
+  "wizard_summary": {
+    "congratulations": "מזל טוב!",
+    "custom_plan_ready": "התוכנית האישית שלך מוכנה!",
+    "daily_recommendations": "יעדי התזונה היומיים שלך",
+    "calories": "קלוריות",
+    "kcal": "קק\"ל",
+    "protein": "חלבון",
+    "g": "גרם",
+    "carbs": "פחמימות",
+    "fats": "שומנים",
+    "continue": "המשך",
+    "calculating_goal": "מחשב את המטרה שלך...",
+    "goal_lose": "לרדת במשקל",
+    "goal_maintain": "לשמור על המשקל",
+    "goal_gain": "לעלות במשקל",
+    "you_should": "אתה צריך",
+    "kg_by": "ק\"ג עד",
+    "weeks": "שבועות",
+    "edit": "ערוך",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "how_to_reach_goals": "איך להגיע למטרות שלך",
+    "goal_tip_1": "עקוב אחר הארוחות שלך באופן עקבי",
+    "goal_tip_2": "הישאר בתוך תקציב הקלוריות שלך",
+    "goal_tip_3": "התאמן בקביעות",
+    "goal_tip_4": "קבל שינה מספקת ומנוחה"
+  },
+  "wizard_apple_health": {
+    "title": "התחבר ל-Apple Health",
+    "subtitle": "סנכרן את נתוני הבריאות שלך",
+    "description": "התחבר לאפליקציית Apple Health כדי לעקוב אוטומטית אחר המשקל, הפעילות ומדדי בריאות אחרים.",
+    "done": "מחובר",
+    "not_connected": "לא מחובר"
+  },
+  "wizard_great_potential": {
+    "title": "נהדר! יש לך פוטנציאל!",
+    "how_to_reach_goals": "איך להגיע למטרות שלך",
+    "consistency_tip": "עקביות היא המפתח להשגת יעדי הבריאות שלך. פעולות יומיות קטנות מובילות לתוצאות גדולות!",
+    "continue": "המשך"
+  },
+  "wizard_recommendation": {
+    "title": "מה אתה חושב על האפליקציה שלנו?",
+    "rating": "4.9",
+    "total_reviews": "(2,847 ביקורות)",
+    "review_1_name": "שרה מ.",
+    "review_1_text": "אפליקציה מדהימה! עזרה לי לרדת 7 ק\"ג ב-3 חודשים. אוהבת את תכונת מעקב הארוחות.",
+    "review_2_name": "מיכאל ר.",
+    "review_2_text": "ממשק נהדר והמלצות מועילות. סוף סוף אפליקציה שעובדת!",
+    "continue": "המשך"
+  },
+  "bottom_nav": {
+    "fridge": "מקרר",
+    "coming_soon": "בקרוב!"
+  },
+  "dashboard": {
+    "get_premium": "קבל פרימיום",
+    "premium": "פרימיום",
+    "daily_calories_left": "קלוריות שנותרו להיום",
+    "meals_logged_motivation": "כל הכבוד! המשך לעקוב אחר הארוחות שלך!",
+    "no_meals_today_motivation": "התחל את היום על ידי רישום הארוחה הראשונה שלך!",
+    "recently_uploaded": "הועלו לאחרונה",
+    "no_recently_uploaded": "אין העלאות אחרונות",
+    "start_tracking_meals": "התחל לעקוב אחר הארוחות שלך",
+    "analyzing": "מנתח...",
+    "delete_meal": "מחק ארוחה",
+    "delete_meal_question": "האם אתה בטוח שברצונך למחוק את הארוחה הזו?",
+    "delete_cannot_be_undone": "פעולה זו לא ניתנת לביטול.",
+    "cancel": "ביטול",
+    "delete": "מחק",
+    "deleting_meal": "מוחק ארוחה...",
+    "meal_deleted_success": "הארוחה נמחקה בהצלחה",
+    "meal_delete_failed": "מחיקת הארוחה נכשלה",
+    "swipe_to_delete_hint": "💡 החלק שמאלה על כל ארוחה כדי למחוק",
+    "meals_for_date": "ארוחות עבור",
+    "no_meals_on_date": "אין ארוחות ב",
+    "time_days_ago": "ימים",
+    "time_hours_ago": "שעות",
+    "time_minutes_ago": "דקות", 
+    "time_just_now": "עכשיו",
+    "try_different_date": "נסה לבחור תאריך אחר או הוסף ארוחות ליום זה",
+    "water_intake": "צריכת מים",
+    "litres": "ליטר",
+    "streaks_count": "רצף ימים",
+    "you_doing_great": "אתה עושה נהדר!",
+    "current_weight": "משקל נוכחי",
+    "kg": "ק\"ג",
+    "steps": "צעדים",
+    "calendar": {
+      "day_short_sat": "שבת",
+      "day_short_sun": "ראשון",
+      "day_short_mon": "שני",
+      "day_short_tue": "שלישי",
+      "day_short_wed": "רביעי",
+      "day_short_thu": "חמישי",
+      "day_short_fri": "שישי"
+    }
+  },
+  "common": {
+    "protein": "חלבון",
+    "fats": "שומנים",
+    "carbs": "פחמימות",
+    "calories": "קלוריות",
+    "edit": "ערוך",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "add": "הוסף",
+    "remove": "הסר",
+    "removed": "הוסר",
+    "range": "טווח",
+    "display_name": "שם תצוגה",
+    "email": "אימייל",
+    "user_data": "נתוני משתמש",
+    "restart_wizard": "התחל מחדש את האשף",
+    "restart_wizard_confirm": "האם אתה בטוח שאתה רוצה להתחיל מחדש את אשף ההגדרות?",
+    "restart_wizard_description": "זה יאפס את כל ההעדפות שלך ויוביל אותך שוב דרך תהליך ההגדרה.",
+    "restart": "התחל מחדש",
+    "delete_account": "מחק חשבון",
+    "delete_account_confirm": "האם אתה בטוח שאתה רוצה למחוק את החשבון שלך? פעולה זו לא ניתנת לביטול.",
+    "delete": "מחק",
+    "account_deleted": "החשבון נמחק בהצלחה"
+  },
   "food_items": {
     "burger": "המבורגר",
     "pizza": "פיצה",
     "white_sauce_pasta": "פסטה ברוטב לבן"
+  },
+  "stats": {
+    "title": "סטטיסטיקות",
+    "water_intake": "צריכת מים",
+    "progress_and_stats": "התקדמות וסטטיסטיקות"
+  },
+  "camera_options": {
+    "scan_meal": "סרוק ארוחה",
+    "scan_ingredient": "סרוק מרכיב",
+    "scan_receipt": "סרוק קבלה",
+    "log_manually": "רשום ידנית"
   }
 }

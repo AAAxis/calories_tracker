@@ -126,7 +126,7 @@ class _CameraScreenState extends State<CameraScreen>
 
       _controller = CameraController(
         camera,
-        ResolutionPreset.medium, // Use medium instead of high for better compatibility
+        ResolutionPreset.high, // Use high resolution for better quality
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
@@ -624,6 +624,7 @@ class _CameraScreenState extends State<CameraScreen>
     return Stack(
       fit: StackFit.expand,
       children: [
+        // Simple, original camera preview - no transformations
         CameraPreview(_controller!),
 
         // Flash overlay for capture feedback

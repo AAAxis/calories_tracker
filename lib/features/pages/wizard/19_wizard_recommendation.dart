@@ -8,6 +8,8 @@ import '../../../core/store/shared_pref.dart';
 import '../auth/login_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/utils/haptics.dart';
+import '../../providers/wizard_provider.dart';
+import 'package:provider/provider.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -25,11 +27,42 @@ class WizardRecommendationApp extends StatefulWidget {
 class _WizardRecommendationAppState extends State<WizardRecommendationApp> {
   int selectedRating = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Debug wizard provider state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<WizardProvider>(context, listen: false);
+      print('🎬 Recommendation: InitState - Current index: ${provider.currentIndex}, Total: ${provider.totalScreens}');
+      
+      // Set the correct index for the recommendation screen (index 17)
+      if (provider.currentIndex != 17) {
+        print('🎬 Recommendation: Setting current index to 17');
+        provider.setCurrentIndex(17, notify: false);
+      }
+    });
+  }
+
   void _navigateToAuth() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
+    print('🎬 Recommendation: _navigateToAuth called');
+    
+    try {
+      // Use wizard provider navigation to continue to paywall
+      final provider = Provider.of<WizardProvider>(context, listen: false);
+      print('🎬 Recommendation: Provider found - Current index ${provider.currentIndex}, total screens: ${provider.totalScreens}');
+      
+      // Check if we can navigate to next page
+      if (provider.currentIndex < provider.totalScreens - 1) {
+        print('🎬 Recommendation: Calling nextPage()...');
+        provider.nextPage();
+        print('🎬 Recommendation: nextPage() completed - New index: ${provider.currentIndex}');
+      } else {
+        print('❌ Recommendation: Already at last screen, cannot navigate further');
+      }
+    } catch (e) {
+      print('❌ Recommendation: Error with provider navigation: $e');
+      print('📊 Recommendation: Stack trace: ${StackTrace.current}');
+    }
   }
 
   final List<Map<String, dynamic>> reviews = [
@@ -58,101 +91,102 @@ class _WizardRecommendationAppState extends State<WizardRecommendationApp> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 38.h),
-                  // App Title
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20.h), // Reduced from default
+                    // App Title
+                    Text(
                       'wizard_hear_about_us.app_title'.tr(),
                       style: TextStyle(
                         fontFamily: 'RusticRoadway',
                         color: colorScheme.primary,
-                        fontSize: 36,
+                        fontSize: 32.sp, // Slightly smaller
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
+                    SizedBox(height: 16.h), // Reduced spacing
 
-                  SizedBox(height: Constants.beforeIcon),
-
-                  // Give us rating title
-                  Text(
-                    'wizard_recommendation.title'.tr(),
-                    style: AppTextStyles.headingLarge.copyWith(
-                      fontSize: kTitleTextStyle.fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
+                    // Title
+                    Text(
+                      'wizard_recommendation.title'.tr(),
+                      style: AppTextStyles.headingMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                        fontSize: 22.sp, // Slightly smaller
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
 
-                  SizedBox(height: 30.h),
+                    SizedBox(height: 16.h), // Reduced spacing
 
-                  // Interactive Star Rating
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.w),
-                          child: Icon(
-                            index < 4
-                                ? Icons.star
-                                : Icons.star_half, // Adjust for 4.7
-                            color: Colors.amber,
-                            size: 32.sp,
-                          ),
-                        );
-                      }),
+                    // Rating
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.h), // Reduced padding
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(5, (index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.w), // Reduced padding
+                            child: Icon(
+                              index < 4
+                                  ? Icons.star
+                                  : Icons.star_half, // Adjust for 4.7
+                              color: Colors.amber,
+                              size: 28.sp, // Slightly smaller
+                            ),
+                          );
+                        }),
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: 40.h),
+                    SizedBox(height: 24.h), // Reduced spacing
 
-                  // Rating Summary
-                  _RatingSummary(),
+                    // Rating Summary
+                    _RatingSummary(),
 
-                  SizedBox(height: 30.h),
+                    SizedBox(height: 20.h), // Reduced spacing
 
-                  // Reviews List
-                  ...reviews.map((review) => _ReviewCard(
+                    // Reviews List - make more compact
+                    ...reviews.map((review) => Padding(
+                      padding: EdgeInsets.only(bottom: 12.h), // Reduced spacing between reviews
+                      child: _ReviewCard(
                         name: review['name'],
                         rating: review['rating'],
                         review: review['review'],
-                      )),
+                      ),
+                    )),
 
-                  SizedBox(height: 120.h), // Space for fixed button
-                ],
+                    SizedBox(height: 20.h), // Add some bottom padding for scroll
+                  ],
+                ),
+              ),
+            ),
+            // Fixed bottom button
+            Container(
+              padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 24.h), // Reduced top padding
+              child: WizardButton(
+                label: 'wizard_recommendation.continue'.tr(),
+                onPressed: () {
+                  print('🎬 Recommendation: Continue button pressed');
+                  AppHaptics.continue_vibrate();
+                  // Don't mark wizard as completed yet - let it continue to paywall
+                  _navigateToAuth();
+                },
+                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w), // Slightly smaller button
               ),
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
-        child: WizardButton(
-          label: 'wizard_recommendation.create_account'.tr(),
-          onPressed: () {
-            AppHaptics.continue_vibrate();
-            // Mark wizard as completed
-            SharedPref.setWizardCompleted(true);
-            _navigateToAuth();
-          },
-          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),
       ),
     );
@@ -163,84 +197,35 @@ class _RatingSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    final List<Map<String, dynamic>> ratingBreakdown = [
-      {'stars': 5, 'percentage': 0.85},
-      {'stars': 4, 'percentage': 0.10},
-      {'stars': 3, 'percentage': 0.03},
-      {'stars': 2, 'percentage': 0.01},
-      {'stars': 1, 'percentage': 0.01},
-    ];
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        // Large rating number
-        Column(
-          children: [
-            Text(
-              'wizard_recommendation.rating'.tr(),
-              style: AppTextStyles.headingLarge.copyWith(
-                fontSize: 72.sp,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-              ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h), // Reduced padding
+      decoration: BoxDecoration(
+        color: colorScheme.onSurface.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'wizard_recommendation.rating'.tr(),
+            style: AppTextStyles.headingLarge.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+              fontSize: 28.sp, // Slightly smaller
             ),
-            Text(
-              'wizard_recommendation.total_reviews'.tr(),
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
-                fontSize: 14.sp,
-              ),
-            ),
-          ],
-        ),
-
-        SizedBox(width: 32.w),
-
-        // Rating breakdown bars
-        Expanded(
-          child: Column(
-            children: ratingBreakdown.map((item) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    Text(
-                      "${item['stars']}",
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Container(
-                        height: 4.h,
-                        decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(2.r),
-                        ),
-                        child: FractionallySizedBox(
-                          alignment: Alignment.centerLeft,
-                          widthFactor: item['percentage'],
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color:
-                                  colorScheme.onSurface.withValues(alpha: 0.7),
-                              borderRadius: BorderRadius.circular(2.r),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
           ),
-        ),
-      ],
+          SizedBox(width: 8.w),
+          Icon(Icons.star, color: Colors.amber, size: 24.sp), // Smaller star
+          SizedBox(width: 12.w),
+          Text(
+            'wizard_recommendation.total_reviews'.tr(),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 13.sp, // Smaller text
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -259,15 +244,15 @@ class _ReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(vertical: 4.h), // Reduced margin
+      padding: EdgeInsets.all(16.w), // Reduced padding
       decoration: BoxDecoration(
-        color: colorScheme.onSurface.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16.r),
+        color: colorScheme.onSurface.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: colorScheme.onSurface.withValues(alpha: 0.1),
+          color: colorScheme.onSurface.withOpacity(0.08),
           width: 1,
         ),
       ),
@@ -279,30 +264,32 @@ class _ReviewCard extends StatelessWidget {
               Text(
                 name,
                 style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface,
-                  fontSize: 16.sp,
+                  fontSize: 14.sp, // Slightly smaller
                 ),
               ),
-              SizedBox(width: 8.w),
-              ...List.generate(
-                rating,
-                (index) => Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                  size: 16.sp,
-                ),
+              const Spacer(),
+              Row(
+                children: List.generate(rating, (index) {
+                  return Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                    size: 14.sp, // Smaller stars
+                  );
+                }),
               ),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 6.h), // Reduced spacing
           Text(
-            '"$review"',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: colorScheme.onSurface.withValues(alpha: 0.8),
-              fontSize: 14.sp,
-              fontStyle: FontStyle.italic,
+            review,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.7),
+              fontSize: 13.sp, // Slightly smaller
             ),
+            maxLines: 3, // Limit lines to save space
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

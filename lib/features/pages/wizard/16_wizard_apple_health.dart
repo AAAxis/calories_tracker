@@ -9,6 +9,8 @@ import '18_wizard_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import '../../../core/utils/haptics.dart';
+import 'package:provider/provider.dart';
+import '../../providers/wizard_provider.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -144,59 +146,69 @@ class _WizardAppleHealthState extends State<WizardAppleHealth> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 28.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 46.h),
-              Image.asset(
-                AppImages.appleHealth,
-                width: 90.w,
-                height: 90.w,
-                fit: BoxFit.contain,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 
+                        MediaQuery.of(context).padding.top - 
+                        MediaQuery.of(context).padding.bottom - 
+                        100.h, // Account for button area
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 46.h),
+                  Image.asset(
+                    AppImages.appleHealth,
+                    width: 90.w,
+                    height: 90.w,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    'wizard_apple_health.title'.tr(),
+                    style: AppTextStyles.headingMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                      fontSize: kTitleTextStyle.fontSize,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    'wizard_apple_health.subtitle'.tr(),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                      fontWeight: FontWeight.normal,
+                      fontSize: 15.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'wizard_apple_health.description'.tr(),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 30.h),
+                  HealthStatusCard(
+                    connected: _isConnected,
+                    lastSynced: _lastSyncTime,
+                    onChanged: (val) {
+                      if (val) {
+                        _connectToAppleHealth();
+                      }
+                    },
+                  ),
+                  const Spacer(),
+                ],
               ),
-              SizedBox(height: 12.h),
-              Text(
-                'wizard_apple_health.title'.tr(),
-                style: AppTextStyles.headingMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                  fontSize: kTitleTextStyle.fontSize,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 10.h),
-              Text(
-                'wizard_apple_health.subtitle'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.7),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 15.sp,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'wizard_apple_health.description'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 30.h),
-              HealthStatusCard(
-                connected: _isConnected,
-                lastSynced: _lastSyncTime,
-                onChanged: (val) {
-                  if (val) {
-                    _connectToAppleHealth();
-                  }
-                },
-              ),
-              const Spacer(),
-            ],
+            ),
           ),
         ),
       ),
@@ -206,7 +218,8 @@ class _WizardAppleHealthState extends State<WizardAppleHealth> {
           label: 'wizard_apple_health.done'.tr(),
           onPressed: () {
             AppHaptics.continue_vibrate();
-            _navigateToNotifications(context);
+            // Use PageView navigation instead of direct navigation
+            Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

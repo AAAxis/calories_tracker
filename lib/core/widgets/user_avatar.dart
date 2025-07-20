@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:calories_tracker/core/services/auth_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserAvatar extends StatelessWidget {
   final double size;
@@ -15,7 +16,6 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = AuthService.currentUser;
-    final photoURL = user?.photoURL;
     final displayName = user?.displayName ?? user?.email?.split('@')[0] ?? 'U';
     
     return GestureDetector(
@@ -32,12 +32,32 @@ class UserAvatar extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(size / 2),
-          child: photoURL != null && photoURL.isNotEmpty
-              ? CachedNetworkImage(
-                  imageUrl: photoURL,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => _buildPlaceholder(displayName),
-                  errorWidget: (context, url, error) => _buildPlaceholder(displayName),
+          child: user != null 
+              ? StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    String? photoURL = user.photoURL;
+                    
+                    // Get the latest photoURL from Firestore if available
+                    if (snapshot.hasData && snapshot.data!.exists) {
+                      final data = snapshot.data!.data() as Map<String, dynamic>?;
+                      if (data != null && data['photoURL'] != null) {
+                        photoURL = data['photoURL'];
+                      }
+                    }
+                    
+                    return photoURL != null && photoURL.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: photoURL,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => _buildPlaceholder(displayName),
+                            errorWidget: (context, url, error) => _buildPlaceholder(displayName),
+                          )
+                        : _buildPlaceholder(displayName);
+                  },
                 )
               : _buildPlaceholder(displayName),
         ),

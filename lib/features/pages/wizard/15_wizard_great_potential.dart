@@ -12,6 +12,8 @@ import '16_wizard_apple_health.dart';
 import '17_wizard_google_fit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/utils/haptics.dart';
+import 'package:provider/provider.dart';
+import '../../providers/wizard_provider.dart';
 
 import 'package:flutter/material.dart';
 
@@ -134,7 +136,7 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -248,9 +250,8 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
                 ),
               ),
 
-              // const Spacer(),
-
-
+              // Add bottom padding to ensure content is visible above the button
+              SizedBox(height: 100.h),
             ],
           ),
         ),
@@ -261,7 +262,8 @@ class WizardGreatPotentialState extends State<WizardGreatPotential>
           label: 'wizard_great_potential.continue'.tr(),
           onPressed: () {
             AppHaptics.continue_vibrate();
-            _navigateToHealthScreen(context);
+            // Use PageView navigation instead of direct navigation
+            Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

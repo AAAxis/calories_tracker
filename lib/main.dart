@@ -9,6 +9,7 @@ import 'package:calories_tracker/core/routing/router.dart';
 import 'package:calories_tracker/core/theme/light_theme.dart';
 import 'package:calories_tracker/core/constants/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:calories_tracker/features/pages/wizard/wizard_pager.dart';
 
 void main() async {
   try {
@@ -64,7 +65,7 @@ class MyApp extends StatelessWidget {
             lazy: false,
           ),
           ChangeNotifierProvider(
-            create: (_) => WizardProvider(totalScreens: 18),
+            create: (_) => WizardProvider(totalScreens: WizardPager.getTotalScreenCount()),
           ),
           ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ],

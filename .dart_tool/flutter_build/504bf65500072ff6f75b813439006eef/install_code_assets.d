@@ -1,1 +1,0 @@
- /Users/admin/Documents/GitHub/calories_tracker/.dart_tool/flutter_build/504bf65500072ff6f75b813439006eef/native_assets.json: 

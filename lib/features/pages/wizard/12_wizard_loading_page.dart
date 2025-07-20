@@ -165,15 +165,18 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '- ${'wizard_loading_page.recommendation_1'.tr()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontSize: 16.sp,
+                                Expanded(
+                                  child: Text(
+                                    '- ${'wizard_loading_page.recommendation_1'.tr()}',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                SizedBox(width: 8.w),
                                 if (0 < checkedCount)
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -190,15 +193,18 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '- ${'wizard_loading_page.recommendation_2'.tr()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontSize: 16.sp,
+                                Expanded(
+                                  child: Text(
+                                    '- ${'wizard_loading_page.recommendation_2'.tr()}',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                SizedBox(width: 8.w),
                                 if (1 < checkedCount)
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -215,15 +221,18 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '- ${'wizard_loading_page.recommendation_3'.tr()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontSize: 16.sp,
+                                Expanded(
+                                  child: Text(
+                                    '- ${'wizard_loading_page.recommendation_3'.tr()}',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                SizedBox(width: 8.w),
                                 if (2 < checkedCount)
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -240,15 +249,18 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '- ${'wizard_loading_page.recommendation_4'.tr()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontSize: 16.sp,
+                                Expanded(
+                                  child: Text(
+                                    '- ${'wizard_loading_page.recommendation_4'.tr()}',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                SizedBox(width: 8.w),
                                 if (3 < checkedCount)
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -265,15 +277,18 @@ class _WizardLoadingPageState extends State<WizardLoadingPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '- ${'wizard_loading_page.recommendation_5'.tr()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontSize: 16.sp,
+                                Expanded(
+                                  child: Text(
+                                    '- ${'wizard_loading_page.recommendation_5'.tr()}',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                SizedBox(width: 8.w),
                                 if (4 < checkedCount)
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),

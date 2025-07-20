@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
-    <!-- Health Connect permissions -->
-    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <!-- Health Connect permissions - COMMENTED OUT FOR APP APPROVAL -->
+    <!-- <uses-permission android:name="android.permission.health.READ_STEPS" /> -->
 
     <application
         android:label="Calzo"
@@ -34,10 +34,12 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Health Connect permissions rationale intent filter -->
+            <!-- Health Connect permissions rationale intent filter - COMMENTED OUT FOR APP APPROVAL -->
+            <!-- 
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
+            -->
         </activity>
         
         <!-- Paywall Activity -->
@@ -47,7 +49,8 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
             
-        <!-- Health Connect Permission Usage Activity -->
+        <!-- Health Connect Permission Usage Activity - COMMENTED OUT FOR APP APPROVAL -->
+        <!--
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
@@ -58,15 +61,18 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity-alias>
+        -->
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!-- Health Connect metadata -->
+        <!-- Health Connect metadata - COMMENTED OUT FOR APP APPROVAL -->
+        <!--
         <meta-data
             android:name="health_permissions"
             android:value="android.permission.health.READ_STEPS" />
+        -->
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -78,14 +84,18 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
-        <!-- Health Connect queries -->
+        <!-- Health Connect queries - COMMENTED OUT FOR APP APPROVAL -->
+        <!--
         <package android:name="com.google.android.apps.healthdata" />
+        -->
     </queries>
-    <!-- Check whether Health Connect is installed or not -->
+    <!-- Check whether Health Connect is installed or not - COMMENTED OUT FOR APP APPROVAL -->
+    <!--
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
         <intent>
             <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
         </intent>
     </queries>
+    -->
 </manifest>

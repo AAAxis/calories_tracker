@@ -7,6 +7,7 @@ class StepProgressCircle extends StatelessWidget {
   final int calories;
   final double distance;
   final double percent; // 0.0 to 1.0
+  final bool showBackground; // New parameter to control background
 
   const StepProgressCircle({
     super.key,
@@ -14,10 +15,70 @@ class StepProgressCircle extends StatelessWidget {
     required this.calories,
     required this.distance,
     required this.percent,
+    this.showBackground = true, // Default to true for backward compatibility
   });
 
   @override
   Widget build(BuildContext context) {
+    Widget progressWidget = CustomPaint(
+      size: const Size(180, 180),
+      painter: _DonutProgressPainter(percent: percent),
+    );
+
+    if (!showBackground) {
+      // Just return the progress circle without background container
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          progressWidget,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                steps.toString(),
+                style: GoogleFonts.montserrat(
+                  color: Colors.white, // White text on dark circle background
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                'dashboard.steps'.tr(),
+                style: GoogleFonts.montserrat(
+                  color: Colors.white, // White text on dark circle background
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$calories Kcal',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white, // White text on dark circle background
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 32),
+                  Text(
+                    '${distance}Km',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white, // White text on dark circle background
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -39,10 +100,7 @@ class StepProgressCircle extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CustomPaint(
-                  size: const Size(180, 180),
-                  painter: _DonutProgressPainter(percent: percent),
-                ),
+                progressWidget,
               ],
             ),
           ),

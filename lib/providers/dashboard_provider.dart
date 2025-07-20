@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:calories_tracker/modules/dashboard/models/recently_uploaded_model.dart';
 import 'package:calories_tracker/features/models/meal_model.dart';
 import 'package:calories_tracker/core/services/auth_service.dart';
+import 'package:calories_tracker/core/store/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DashboardProvider extends ChangeNotifier {
   int _currentPage = 0;
@@ -19,6 +21,9 @@ class DashboardProvider extends ChangeNotifier {
   bool _isInitialized = false;
 
   DashboardProvider() {
+    // Initialize with today's date (normalized to start of day)
+    final now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day);
     _loadUserName();
     _loadMealsFromStorage();
   }
@@ -58,8 +63,20 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void setSelectedDate(DateTime? date) {
+    print('🗓️ Setting selected date to: $date');
     _selectedDate = date;
+    print('📊 Updating nutrition values for selected date...');
     _updateNutritionValues();
+    print('📋 Updating recently uploaded list for selected date...');
+    _updateRecentlyUploadedList();
+    print('🔔 Notifying listeners of date change...');
+    notifyListeners();
+  }
+
+  void clearDateFilter() {
+    _selectedDate = null;
+    _updateNutritionValues();
+    _updateRecentlyUploadedList();
     notifyListeners();
   }
 
@@ -138,7 +155,10 @@ class DashboardProvider extends ChangeNotifier {
             final localMealIds = loadedMeals.map((m) => m.id).toSet();
             final newFirebaseMeals = firebaseMeals.where((m) => !localMealIds.contains(m.id)).toList();
             
-            _meals = [...newFirebaseMeals, ...loadedMeals];
+            // Combine and sort all meals by timestamp (newest first)
+            final allMeals = [...newFirebaseMeals, ...loadedMeals];
+            allMeals.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+            _meals = allMeals;
             
             // Save Firebase meals to local storage for offline access
             for (final meal in newFirebaseMeals) {
@@ -151,11 +171,13 @@ class DashboardProvider extends ChangeNotifier {
             _meals = loadedMeals;
           }
         } else {
-          // User not authenticated, use local storage only
+          // User not authenticated, use local storage only - sort by timestamp
+          loadedMeals.sort((a, b) => b.timestamp.compareTo(a.timestamp));
           _meals = loadedMeals;
         }
       } else {
-        // Not initialized yet, use local storage only
+        // Not initialized yet, use local storage only - sort by timestamp
+        loadedMeals.sort((a, b) => b.timestamp.compareTo(a.timestamp));
         _meals = loadedMeals;
       }
 
@@ -204,6 +226,8 @@ class DashboardProvider extends ChangeNotifier {
       print('  [${i}] isAnalyzing: ${meal.isAnalyzing}, id: ${meal.id}, imageUrl: ${meal.imageUrl?.substring(meal.imageUrl!.length - 30) ?? 'null'}, localPath: ${meal.localImagePath?.substring(meal.localImagePath!.length - 30) ?? 'null'}');
     }
     
+    // Sort meals by timestamp (newest first)
+    newMeals.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     _meals = newMeals;
     _updateNutritionValues();
     _updateRecentlyUploadedList();
@@ -214,8 +238,8 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> deleteMeal(String mealId) async {
     try {
-      // Delete from local storage
-      await Meal.deleteFromLocalStorage(mealId);
+      // Delete from local storage using the correct method
+      await Meal.removeFromLocalStorage(mealId);
 
       // Delete from Firebase if user is authenticated
       final user = AuthService.currentUser;
@@ -228,6 +252,7 @@ class DashboardProvider extends ChangeNotifier {
           print('✅ Meal deleted from Firebase');
         } catch (e) {
           print('❌ Error deleting from Firebase: $e');
+          // If Firebase deletion fails, we should still proceed with local deletion
         }
       }
 
@@ -236,8 +261,11 @@ class DashboardProvider extends ChangeNotifier {
       _updateNutritionValues();
       _updateRecentlyUploadedList();
       notifyListeners();
+      
+      print('✅ Meal deleted successfully from local storage and UI');
     } catch (e) {
-      print('Error deleting meal: $e');
+      print('❌ Error deleting meal: $e');
+      throw e; // Re-throw to show error to user
     }
   }
 
@@ -290,13 +318,15 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void _updateRecentlyUploadedList() {
-    // DEBUG: Print all meals before mapping
-    print('DEBUG: Meals in _meals:');
-    for (final meal in _meals) {
+    // Use filtered meals if a date is selected, otherwise use all meals
+    final mealsToShow = _selectedDate != null ? filteredMeals : _meals;
+    
+    print('DEBUG: Meals to show (${_selectedDate != null ? 'filtered' : 'all'}):');
+    for (final meal in mealsToShow) {
       print('id:  [32m${meal.id} [0m, imageUrl:  [34m${meal.imageUrl} [0m, localImagePath:  [34m${meal.localImagePath} [0m, calories:  [35m${meal.calories} [0m, protein: ${meal.protein}, fat: ${meal.fat}, carbs: ${meal.carbs}, isAnalyzing: ${meal.isAnalyzing}, analysisFailed: ${meal.analysisFailed}');
     }
     // Include analyzing meals in the display but exclude failed ones
-    final recentMeals = _meals
+    final recentMeals = mealsToShow
         .where((meal) => !meal.analysisFailed)  // Only exclude failed meals, keep analyzing ones
         .take(10)
         .toList();
@@ -305,7 +335,7 @@ class DashboardProvider extends ChangeNotifier {
       return RecentlyUploadedModel(
         mealId: meal.id, // Add meal ID for deletion
         image: meal.imageUrl ?? meal.localImagePath ?? 'assets/images/burger.jpg',
-        titleKey: meal.isAnalyzing ? 'Analyzing...' : meal.getDisplayName(),  // Show "Analyzing..." for analyzing meals
+        titleKey: meal.isAnalyzing ? 'dashboard.analyzing' : meal.getDisplayName(),  // Show "Analyzing..." for analyzing meals
         time: _formatTime(meal.timestamp),
         overalAllCalorie: meal.isAnalyzing ? '--' : '${meal.calories.toInt()} kCal',  // Special display for analyzing
         proteinCalorie: meal.isAnalyzing ? '--' : '${meal.protein.toInt()}g',
@@ -320,13 +350,13 @@ class DashboardProvider extends ChangeNotifier {
     final difference = now.difference(timestamp);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return '${difference.inDays}${'dashboard.time_days_ago'.tr()}';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return '${difference.inHours}${'dashboard.time_hours_ago'.tr()}';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return '${difference.inMinutes}${'dashboard.time_minutes_ago'.tr()}';
     } else {
-      return 'Just now';
+      return 'dashboard.time_just_now'.tr();
     }
   }
 
@@ -341,6 +371,61 @@ class DashboardProvider extends ChangeNotifier {
         !meal.isAnalyzing &&
         !meal.analysisFailed
     );
+  }
+
+  // Mark dashboard as completed
+  Future<void> markDashboardCompleted() async {
+    try {
+      await SharedPref.setDashboardCompleted(true);
+      print('✅ Dashboard marked as completed');
+    } catch (e) {
+      print('❌ Error marking dashboard as completed: $e');
+    }
+  }
+
+  // Check if dashboard is completed
+  bool isDashboardCompleted() {
+    return SharedPref.getDashboardCompleted();
+  }
+
+  /// Check if user should be blocked from scanning (after first meal)
+  Future<bool> shouldBlockScan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Check if user has premium access
+      final isPremium = prefs.getBool('is_premium') ?? false;
+      if (isPremium) {
+        return false; // Premium users are never blocked
+      }
+
+      // Check referral scans first
+      final hasUsedReferralCode = prefs.getBool('has_used_referral_code') ?? false;
+      if (hasUsedReferralCode) {
+        final referralFreeScans = prefs.getInt('referral_free_scans') ?? 0;
+        final usedReferralScans = prefs.getInt('used_referral_scans') ?? 0;
+
+        if (usedReferralScans < referralFreeScans) {
+          return false; // User still has referral scans
+        }
+      }
+
+      // Count completed meals (non-analyzing, non-failed)
+      final completedMealsCount = _meals.where((meal) => 
+        !meal.isAnalyzing && !meal.analysisFailed
+      ).length;
+
+      // Block after first successful scan
+      return completedMealsCount >= 1;
+    } catch (e) {
+      print('❌ Error checking scan block: $e');
+      return false; // Default to not blocking on error
+    }
+  }
+
+  /// Check if user has any meals in database (for allowing one scan after delete)
+  bool hasAnyMeals() {
+    return _meals.where((meal) => !meal.isAnalyzing && !meal.analysisFailed).isNotEmpty;
   }
 
 } 

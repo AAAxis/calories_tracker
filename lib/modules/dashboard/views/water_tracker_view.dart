@@ -1,5 +1,4 @@
 import 'package:calories_tracker/core/styles/styles.dart';
-import 'package:calories_tracker/modules/dashboard/components/step_progress_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,16 +23,16 @@ class _StatsViewState extends State<StatsView> {
     final isRtl = Localizations.localeOf(context).languageCode == 'he';
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          'Stats',
+          'stats.title'.tr(),
           style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         automaticallyImplyLeading: false, // Remove back button since this is a tab
@@ -45,25 +44,10 @@ class _StatsViewState extends State<StatsView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 10),
-              // ACTIVITY SECTION
-              AppText(
-                'Activity',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-              SizedBox(height: 10),
-              StepProgressCircle(
-                steps: 3845,
-                calories: 3451,
-                distance: 1.5,
-                percent: 0.22,
-              ),
-              SizedBox(height: 20),
               
               // WATER INTAKE SECTION
               AppText(
-                'Water Intake',
+                'stats.water_intake'.tr(),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -82,28 +66,36 @@ class _StatsViewState extends State<StatsView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                'dashboard.water_intake'.tr(),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                                              Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    'dashboard.water_intake'.tr(),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    maxLines: 2,
+                                    textOverflow: TextOverflow.ellipsis,
+                                  ),
+                                  AppText(
+                                    '${totalIntake.toStringAsFixed(1)}/${(glassCount * glassVolume).toStringAsFixed(1)} ${'dashboard.litres'.tr()}',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xff5A5B5C),
+                                    maxLines: 1,
+                                    textOverflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                              AppText(
-                                '${totalIntake.toStringAsFixed(1)}/${(glassCount * glassVolume).toStringAsFixed(1)} ${'dashboard.litres'.tr()}',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xff5A5B5C),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            height: 35,
-                            width: 80,
+                            ),
+                                                      Flexible(
+                              child: Container(
+                                height: 35,
+                                width: 80,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage('assets/icons/gear.png'),
@@ -140,6 +132,7 @@ class _StatsViewState extends State<StatsView> {
                               ),
                             ),
                           ),
+                        ),
                         ],
                       ),
                       SizedBox(height: 10.h(context)),
@@ -163,7 +156,7 @@ class _StatsViewState extends State<StatsView> {
               
               // PROGRESS & STATS SECTION
               AppText(
-                'Progress & Stats',
+                'stats.progress_and_stats'.tr(),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -186,14 +179,18 @@ class _StatsViewState extends State<StatsView> {
                       children: [
                         Positioned(
                           top: 10.h(context),
-                          left: isRtl ? 110.w(context) : 20.w(context),
+                          left: isRtl ? 80.w(context) : 10.w(context),
+                          right: isRtl ? 10.w(context) : 80.w(context),
                           child: Text(
                             'dashboard.streaks_count'.tr(),
                             style: GoogleFonts.montserrat(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         Positioned(
@@ -215,7 +212,8 @@ class _StatsViewState extends State<StatsView> {
                         ),
                         Positioned(
                           top: 110.h(context),
-
+                          left: 10.w(context),
+                          right: 10.w(context),
                           child: Text(
                             'dashboard.you_doing_great'.tr(),
                             style: GoogleFonts.montserrat(
@@ -223,8 +221,10 @@ class _StatsViewState extends State<StatsView> {
                               fontSize: 10,
                               fontWeight: FontWeight.w400,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                           ),
-
                         ),
                       ],
                     ),
@@ -247,18 +247,23 @@ class _StatsViewState extends State<StatsView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'dashboard.current_weight'.tr(),
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                              Expanded(
+                                child: Text(
+                                  'dashboard.current_weight'.tr(),
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              SizedBox(width: 8),
                               Image.asset(
                                 'assets/icons/spark.png',
-                                height: 40,
-                                width: 40,
+                                height: 35,
+                                width: 35,
                               ),
                             ],
                           ),

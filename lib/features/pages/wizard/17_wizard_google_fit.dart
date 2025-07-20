@@ -9,6 +9,8 @@ import '18_wizard_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import '../../../core/utils/haptics.dart';
+import 'package:provider/provider.dart';
+import '../../providers/wizard_provider.dart';
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -203,7 +205,8 @@ class _WizardGoogleFitState extends State<WizardGoogleFit> {
             ? () {} // Empty function when connecting
             : () {
                  AppHaptics.continue_vibrate();
-                _navigateToNotifications(context);
+                // Use PageView navigation instead of direct navigation
+                Provider.of<WizardProvider>(context, listen: false).nextPage();
               },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

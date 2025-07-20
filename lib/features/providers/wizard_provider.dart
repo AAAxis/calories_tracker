@@ -21,6 +21,7 @@ class WizardProvider extends ChangeNotifier {
   double _targetWeight = 65.0;
   bool _isKg = true;
   int? _selectedSocialMedia;
+  String? _referralCode;
 
   FixedExtentScrollController? _scrollController;
 
@@ -36,6 +37,7 @@ class WizardProvider extends ChangeNotifier {
   double get targetWeight => _targetWeight;
   bool get isKg => _isKg;
   int? get selectedSocialMedia => _selectedSocialMedia;
+  String? get referralCode => _referralCode;
 
   FixedExtentScrollController get scrollController {
     _scrollController ??= FixedExtentScrollController(
@@ -55,23 +57,54 @@ class WizardProvider extends ChangeNotifier {
   }
 
   void onPageChanged(int index) {
+    print('🎬 WizardProvider: onPageChanged($index) - Previous: $currentIndex');
     currentIndex = index;
     notifyListeners();
+    print('🎬 WizardProvider: Current index updated to $currentIndex');
+  }
+
+  void setCurrentIndex(int index, {bool notify = true}) {
+    print('🎬 WizardProvider: setCurrentIndex($index) called');
+    if (index >= 0 && index < totalScreens) {
+      currentIndex = index;
+      if (notify) {
+        notifyListeners();
+      }
+      print('🎬 WizardProvider: Current index set to $currentIndex');
+    } else {
+      print('❌ WizardProvider: Invalid index $index (total: $totalScreens)');
+    }
   }
 
   void goTo(int index) {
+    print('🎬 WizardProvider: goTo($index) called');
     if (index >= 0 && index < totalScreens) {
+      print('🎬 WizardProvider: Animating to page $index');
+      
       pageController.animateToPage(
         index,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-      );
+      ).then((_) {
+        // Only update if onPageChanged didn't fire (backup)
+        if (currentIndex != index) {
+          print('🎬 WizardProvider: onPageChanged didn\'t fire, force updating to $index');
+          currentIndex = index;
+          notifyListeners();
+        }
+      });
+    } else {
+      print('❌ WizardProvider: Invalid index $index (total: $totalScreens)');
     }
   }
 
   void nextPage() {
+    print('🎬 WizardProvider: nextPage called - Current: $currentIndex, Total: $totalScreens');
     if (currentIndex < totalScreens - 1) {
+      print('🎬 WizardProvider: Navigating from $currentIndex to ${currentIndex + 1}');
       goTo(currentIndex + 1);
+    } else {
+      print('❌ WizardProvider: Cannot navigate - already at last screen ($currentIndex/$totalScreens)');
     }
   }
 
@@ -149,6 +182,11 @@ class WizardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setReferralCode(String? code) {
+    _referralCode = code;
+    notifyListeners();
+  }
+
   void reset() {
     currentIndex = 0;
     _height = 175;
@@ -163,13 +201,20 @@ class WizardProvider extends ChangeNotifier {
     _targetWeight = 65.0;
     _isKg = true;
     _selectedSocialMedia = null;
+    _referralCode = null;
     
     // Reset scroll controller
     _scrollController?.dispose();
     _scrollController = null;
     
-    // Reset page controller
-    pageController.jumpToPage(0);
+    // Reset page controller only if it's attached to a PageView
+    try {
+      if (pageController.hasClients) {
+        pageController.jumpToPage(0);
+      }
+    } catch (e) {
+      print('⚠️ PageController reset skipped - not attached to PageView');
+    }
     
     notifyListeners();
   }
@@ -246,6 +291,9 @@ class WizardProvider extends ChangeNotifier {
     await prefs.setBool('wizard_is_kg', _isKg);
     if (_selectedSocialMedia != null) {
       await prefs.setInt('wizard_social_media', _selectedSocialMedia!);
+    }
+    if (_referralCode != null) {
+      await prefs.setString('referral_code', _referralCode!);
     }
   }
 

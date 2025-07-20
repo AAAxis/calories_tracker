@@ -5,6 +5,7 @@ class SharedPref {
   
   // Keys
   static const String _wizardCompletedKey = 'wizard_completed';
+  static const String _dashboardCompletedKey = 'dashboard_completed';
   static const String _userEmailKey = 'user_email';
   static const String _userNameKey = 'user_name';
   
@@ -29,6 +30,15 @@ class SharedPref {
     return instance.getBool(_wizardCompletedKey) ?? false;
   }
   
+  // Dashboard completion
+  static Future<void> setDashboardCompleted(bool completed) async {
+    await instance.setBool(_dashboardCompletedKey, completed);
+  }
+  
+  static bool getDashboardCompleted() {
+    return instance.getBool(_dashboardCompletedKey) ?? false;
+  }
+  
   // User data
   static Future<void> setUserEmail(String email) async {
     await instance.setString(_userEmailKey, email);
@@ -50,6 +60,11 @@ class SharedPref {
   static Future<void> clearUserData() async {
     await instance.remove(_userEmailKey);
     await instance.remove(_userNameKey);
+  }
+  
+  // Reset wizard completion
+  static Future<void> resetWizardCompletion() async {
+    await instance.setBool(_wizardCompletedKey, false);
   }
   
   // Clear all data

@@ -27,18 +27,18 @@ class CalorieTrackerProgressBar extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: Colors.black,
         ),
-        SizedBox(height: 5.h(context)),
+        SizedBox(height: 3.h(context)),
         SizedBox(
           width: 62.w(context),
           child: LinearProgressIndicator(
             value: value,
-            minHeight: 7.h(context),
+            minHeight: 6.h(context),
             borderRadius: BorderRadius.circular(10),
             color: color,
             backgroundColor: AppColors.grey,
           ),
         ),
-        SizedBox(height: 5.h(context)),
+        SizedBox(height: 3.h(context)),
         Padding(
           padding: EdgeInsets.only(left: 10.w(context)),
           child: AppText(

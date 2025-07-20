@@ -6,11 +6,12 @@ import '../../../core/constants/app_icons.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/custom_widgets/wizard_button.dart';
 import '../../../core/services/calculation_service.dart';
-import '14_wizard_referal.dart';  // Add import for Wizard18
 import '../../../core/custom_widgets/calorie_gauage_wizard.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/custom_widgets/wizard_icon.dart';
 import '../../../core/utils/haptics.dart';
+import 'package:provider/provider.dart'; // Add import for Provider
+import '../../providers/wizard_provider.dart'; // Add import for WizardProvider
 
 // Constants
 const TextStyle kTitleTextStyle = TextStyle(
@@ -515,20 +516,8 @@ class _WizardSummaryDateAndMeasurmentsState extends State<WizardSummaryDateAndMe
           label: 'wizard_summary.continue'.tr(),
           onPressed: () {
             AppHaptics.continue_vibrate();
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => const WizardReferal(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(1.0, 0.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOut;
-                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                  var offsetAnimation = animation.drive(tween);
-                  return SlideTransition(position: offsetAnimation, child: child);
-                },
-                transitionDuration: const Duration(milliseconds: 300),
-              ),
-            );
+            // Use PageView navigation instead of direct Navigator.push
+            Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

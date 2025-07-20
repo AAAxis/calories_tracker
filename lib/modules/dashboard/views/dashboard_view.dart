@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:calories_tracker/core/services/paywall_service.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -23,33 +24,21 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   // Removed PageController and _pages since dashboard now shows only single content
+  bool _isPremium = false;
 
-  // Helper function to check if user should have free camera access
-  Future<bool> _shouldAllowFreeCameraAccess() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      // Check referral scans first
-      final hasUsedReferralCode = prefs.getBool('has_used_referral_code') ?? false;
-      if (hasUsedReferralCode) {
-        final referralFreeScans = prefs.getInt('referral_free_scans') ?? 0;
-        final usedReferralScans = prefs.getInt('used_referral_scans') ?? 0;
-
-        if (usedReferralScans < referralFreeScans) {
-          print('🎁 User has ${referralFreeScans - usedReferralScans} referral scans');
-          return true;
-        }
-      }
-
-      // Check daily scan limit (1 scan per day for free users)
-      final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-      final canUseFreeScan = !dashboardProvider.hasScansToday();
-      print('🔍 Daily scan check: $canUseFreeScan');
-      return canUseFreeScan;
-
-    } catch (e) {
-      print('❌ Error checking free camera access: $e');
-      return false;
+  // Check if user should be blocked and show paywall
+  Future<void> _checkScanPermissionAndNavigate() async {
+    final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+    
+    // Check if user should be blocked
+    final shouldBlock = await dashboardProvider.shouldBlockScan();
+    
+    if (shouldBlock) {
+      print('🚫 User is blocked - showing paywall');
+      await _showPremiumPaywall();
+    } else {
+      print('✅ User can scan - opening camera');
+      await _triggerCameraAccess();
     }
   }
 
@@ -86,54 +75,191 @@ class _DashboardViewState extends State<DashboardView> {
     }
   }
 
+  Future<void> _showPremiumPaywall() async {
+    print('💎 Opening NATIVE premium paywall...');
+    
+    try {
+      final result = await PaywallService.showPaywall(
+        context,
+        offeringId: PaywallService.defaultOfferingId,
+        forceCloseOnRestore: false, // Use native RevenueCat paywall, not custom dialog
+      );
+      
+      if (result) {
+        print('✅ Premium subscription activated!');
+        // Update premium status
+        await _checkPremiumStatus();
+        
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('🎉 Welcome to Premium! Enjoy unlimited meal tracking!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        print('❌ Premium subscription cancelled or failed');
+      }
+    } catch (e) {
+      print('❌ Error showing premium paywall: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to load premium options. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPremiumStatus();
+  }
+
+  Future<void> _checkPremiumStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isPremium = prefs.getBool('is_premium') ?? false;
+      
+      // Also check with PaywallService for more accurate status
+      final hasActiveSubscription = await PaywallService.hasActiveSubscription();
+      
+      final premiumStatus = isPremium || hasActiveSubscription;
+      
+      if (mounted && premiumStatus != _isPremium) {
+        setState(() {
+          _isPremium = premiumStatus;
+        });
+      }
+    } catch (e) {
+      print('❌ Error checking premium status: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
         return Wrapper(
           child: Scaffold(
-            backgroundColor: Colors.white,
-            body: SingleChildScrollView(
-              physics: ScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).padding.top + 10),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        UserAvatar(
-                          size: 50.0,
-                          onTap: () {
-                            context.push('/profile');
-                          },
+            backgroundColor: Colors.transparent,
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  // Fixed App Bar
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top + 10,
+                        bottom: 10,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
+                        child: Column(
+                          children: [
+                            // Loading Spinner at Top
+                            if (dashboardProvider.isLoading)
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Loading...',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            // App Bar Content
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                UserAvatar(
+                                  size: 50.0,
+                                  onTap: () {
+                                    context.push('/profile');
+                                  },
+                                ),
+                                const Spacer(),
+                                if (_isPremium) 
+                                  // Show Premium badge for premium users
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(Assets.icons.premium.path),
+                                      SizedBox(width: 4.w(context)),
+                                      AppText(
+                                        'dashboard.premium'.tr(),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.black,
+                                      ),
+                                    ],
+                                  )
+                                else
+                                  // Show Get Premium button for free users
+                                  GestureDetector(
+                                    onTap: _showPremiumPaywall,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(Assets.icons.premium.path),
+                                        SizedBox(width: 4.w(context)),
+                                        AppText(
+                                          'dashboard.get_premium'.tr(),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.black,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push('/profile');
+                                  },
+                                  child: Icon(Icons.menu, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const Spacer(),
-                        Image.asset(Assets.icons.premium.path),
-                        SizedBox(width: 4.w(context)),
-                        AppText(
-                          'dashboard.get_premium'.tr(),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.black,
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            context.push('/profile');
-                          },
-                          child: Icon(Icons.menu, color: Colors.black),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: 10.h(context)),
-                  CalorieCalendar(maxCalories: 2000),
-                  SizedBox(height: 10.h(context)),
-                  // Single page dashboard content (no more PageView needed)
-                  const DashboardContent(),
-                ],
+                  // Fixed Calendar
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w(context)),
+                      child: CalorieCalendar(maxCalories: 2000),
+                    ),
+                  ),
+                ];
+              },
+              body: Container(
+                padding: EdgeInsets.only(top: 10.h(context)),
+                child: const DashboardContent(),
               ),
             ),
           ),

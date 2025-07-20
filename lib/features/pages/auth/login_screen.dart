@@ -8,6 +8,7 @@ import '../../../core/services/auth_service.dart';
 import 'login_with_email_screen.dart';
 
 import 'package:easy_localization/easy_localization.dart';
+import '../../../core/store/shared_pref.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -69,6 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLoginSuccess() async {
+    // Mark wizard as completed now that user has successfully logged in
+    await SharedPref.setWizardCompleted(true);
+    
     if (mounted) {
       // Navigate to new dashboard using go_router
       WidgetsBinding.instance.addPostFrameCallback((_) {

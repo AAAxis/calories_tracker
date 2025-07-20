@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:calories_tracker/core/constants/wrapper.dart';
 import 'package:calories_tracker/core/styles/styles.dart';
 import 'package:calories_tracker/providers/dashboard_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:calories_tracker/core/services/paywall_service.dart';
 
 class CameraOptionsView extends StatelessWidget {
   const CameraOptionsView({super.key});
@@ -22,7 +24,7 @@ class CameraOptionsView extends StatelessWidget {
     
     return Wrapper(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         body: SafeArea(
           child: Padding(
@@ -33,28 +35,28 @@ class CameraOptionsView extends StatelessWidget {
                 _buildOptionButton(
                   context,
                   icon: Icons.camera_alt,
-                  label: 'Scan Meal',
+                  label: 'camera_options.scan_meal'.tr(),
                   onTap: () => _openCamera(context),
                 ),
                 SizedBox(height: 24.h),
                 _buildOptionButton(
                   context,
                   icon: Icons.inventory_2,
-                  label: 'Scan Ingredient',
+                  label: 'camera_options.scan_ingredient'.tr(),
                   onTap: () => _scanIngredients(context),
                 ),
                   SizedBox(height: 24.h),
                 _buildOptionButton(
                   context,
                   icon: Icons.receipt_long,
-                  label: 'Scan Receipt',
+                  label: 'camera_options.scan_receipt'.tr(),
                   onTap: () => _scanReceipt(context),
                 ),
                 SizedBox(height: 24.h),
                 _buildOptionButton(
                   context,
                   icon: Icons.edit_note,
-                  label: 'Log Manually',
+                  label: 'camera_options.log_manually'.tr(),
                   onTap: () => _logManually(context),
                 ),
               
@@ -106,13 +108,60 @@ class CameraOptionsView extends StatelessWidget {
     );
   }
 
-  void _openCamera(BuildContext context) {
-    // Navigate to camera screen with dashboard provider data
+  Future<void> _openCamera(BuildContext context) async {
     final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-    context.push('/camera', extra: {
-      'meals': dashboardProvider.meals,
-      'updateMeals': dashboardProvider.updateMeals,
-    });
+    
+    // Check if user should be blocked and show paywall
+    final shouldBlock = await dashboardProvider.shouldBlockScan();
+    
+    if (shouldBlock) {
+      print('🚫 User is blocked - showing paywall');
+      await _showPremiumPaywall(context);
+    } else {
+      print('✅ User can scan - opening camera');
+      // Navigate to camera screen with dashboard provider data
+      context.push('/camera', extra: {
+        'meals': dashboardProvider.meals,
+        'updateMeals': dashboardProvider.updateMeals,
+      });
+    }
+  }
+
+  Future<void> _showPremiumPaywall(BuildContext context) async {
+    print('💎 Opening premium paywall...');
+    
+    try {
+      final result = await PaywallService.showPaywall(
+        context,
+        offeringId: PaywallService.defaultOfferingId,
+        forceCloseOnRestore: false,
+      );
+      
+      if (result) {
+        print('✅ Premium subscription activated!');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('🎉 Welcome to Premium! Enjoy unlimited meal tracking!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        print('❌ Premium subscription cancelled or failed');
+      }
+    } catch (e) {
+      print('❌ Error showing premium paywall: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to load premium options. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _logManually(BuildContext context) {

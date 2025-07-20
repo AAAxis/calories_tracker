@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/dashboard_provider.dart';
 
 class DayItem {
   final DateTime date;
@@ -32,8 +34,8 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
   @override
   void initState() {
     super.initState();
-    _generateDays();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _generateDays();
       _scrollToSelected();
     });
   }
@@ -41,29 +43,36 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
   void _generateDays() {
     final now = DateTime.now();
     final start = now.subtract(Duration(days: 29));
-    final end = now;
+    
+    final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
 
     days = List.generate(30, (index) {
       final date = start.add(Duration(days: index));
-
-      // calorie data for demonstration
-      final mockData = {
-        2: 1800,
-        3: 2100,
-        4: 2000,
-        6: 1900,
-        10: 2200,
-        13: 1700,
-        // days 1, 5, 7... are skipped
-      };
+      
+      // Calculate actual calories for this day
+      final caloriesForDay = _calculateCaloriesForDay(date, dashboardProvider.meals);
 
       return DayItem(
         date: date,
         maxCalories: widget.maxCalories,
-        consumedCalories: mockData[date.day],
+        consumedCalories: caloriesForDay > 0 ? caloriesForDay : null,
       );
     });
-    selectedIndex = days.length - 1;
+    selectedIndex = days.length - 1; // Default to today
+  }
+
+  int _calculateCaloriesForDay(DateTime date, List meals) {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return meals
+        .where((meal) => 
+            meal.timestamp.isAfter(startOfDay) &&
+            meal.timestamp.isBefore(endOfDay) &&
+            !meal.isAnalyzing &&
+            !meal.analysisFailed)
+        .fold<double>(0.0, (sum, meal) => sum + meal.calories)
+        .round();
   }
 
   void _scrollToSelected() {
@@ -74,67 +83,102 @@ class _CalorieCalendarState extends State<CalorieCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60, // reduced from 100
-
-      child: ListView.separated(
-        controller: _scrollController,
-        scrollDirection: Axis.horizontal,
-        itemCount: days.length,
-        padding: const EdgeInsets.only(left: 25, right: 16,top: 0),
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (_, index) {
-          final day = days[index];
-          final isSelected = index == selectedIndex;
-
-          // Simplified date widget without red/green color logic
-          Widget dateWidget = Container(
-            width: 32,
-            height: 32,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.transparent,
-              shape: BoxShape.circle,
-            ),
-            child: Text(
-              DateFormat('dd').format(day.date),
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
+    return Consumer<DashboardProvider>(
+      builder: (context, dashboardProvider, child) {
+        // Regenerate days when meals change
+        _generateDays();
+        
+        // Sync selected index with dashboard provider's selected date
+        if (dashboardProvider.selectedDate != null) {
+          final providerSelectedDate = dashboardProvider.selectedDate!;
+          final matchingIndex = days.indexWhere((day) => 
+            day.date.year == providerSelectedDate.year &&
+            day.date.month == providerSelectedDate.month &&
+            day.date.day == providerSelectedDate.day
           );
+          if (matchingIndex != -1 && matchingIndex != selectedIndex) {
+            selectedIndex = matchingIndex;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToSelected();
+            });
+          }
+        }
+        
+        return SizedBox(
+          height: 60,
+          child: ListView.separated(
+            controller: _scrollController,
+            scrollDirection: Axis.horizontal,
+            itemCount: days.length,
+            padding: const EdgeInsets.only(left: 25, right: 16, top: 0),
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (_, index) {
+              final day = days[index];
+              final isSelected = index == selectedIndex;
+              final hasCalories = day.consumedCalories != null && day.consumedCalories! > 0;
 
-          return GestureDetector(
-            onTap: () => setState(() => selectedIndex = index),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isSelected ? Color(0xff676767) : Colors.transparent,
-                borderRadius: BorderRadius.circular(80),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'dashboard.calendar.day_short_${DateFormat('E', 'en').format(day.date).toLowerCase()}'.tr(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 8), // reduced from 20
-                    dateWidget,
-                  ],
+              // Date widget with calorie indicator
+              Widget dateWidget = Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  shape: BoxShape.circle,
+                  border: hasCalories && !isSelected
+                      ? Border.all(color: Colors.green, width: 2)
+                      : null,
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+                child: Text(
+                  DateFormat('dd').format(day.date),
+                  style: TextStyle(
+                    color: isSelected 
+                        ? Colors.black 
+                        : hasCalories 
+                            ? Colors.green 
+                            : Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              );
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() => selectedIndex = index);
+                  // Update selected date in dashboard provider (normalized to start of day)
+                  final normalizedDate = DateTime(day.date.year, day.date.month, day.date.day);
+                  dashboardProvider.setSelectedDate(normalizedDate);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isSelected ? Color(0xff676767) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(80),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'dashboard.calendar.day_short_${DateFormat('E', 'en').format(day.date).toLowerCase()}'.tr(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        dateWidget,
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

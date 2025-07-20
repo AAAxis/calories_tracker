@@ -606,13 +606,13 @@ class Meal {
 
   static Future<void> deleteFromLocalStorage(String mealId) async {
     final prefs = await SharedPreferences.getInstance();
-    final mealsJson = prefs.getString('meals');
+    final mealsJson = prefs.getString('local_meals'); // Use correct key
     if (mealsJson == null) return;
 
     final List<dynamic> decoded = jsonDecode(mealsJson);
     final meals = decoded.map((json) => Meal.fromJson(json)).toList();
     meals.removeWhere((meal) => meal.id == mealId);
     
-    await prefs.setString('meals', jsonEncode(meals.map((m) => m.toJson()).toList()));
+    await prefs.setString('local_meals', jsonEncode(meals.map((m) => m.toJson()).toList())); // Use correct key
   }
 } 

@@ -44,10 +44,22 @@ class _WizardNotificationState extends State<WizardNotification> {
   }
 
   Future<void> _checkNotificationPermission() async {
-    final status = await Permission.notification.status;
-    setState(() {
-      _notificationStatus = status;
-    });
+    try {
+      final status = await Permission.notification.status;
+      print('🔔 Notification permission status: $status');
+      print('🔔 Is granted: ${status.isGranted}');
+      print('🔔 Is denied: ${status.isDenied}');
+      print('🔔 Is permanently denied: ${status.isPermanentlyDenied}');
+      print('🔔 Is restricted: ${status.isRestricted}');
+      
+      setState(() {
+        _notificationStatus = status;
+      });
+      
+      // Don't show automatic messages - let user decide to request
+    } catch (e) {
+      print('❌ Error checking notification permission: $e');
+    }
   }
 
   Future<void> _requestNotificationPermission() async {
@@ -56,24 +68,59 @@ class _WizardNotificationState extends State<WizardNotification> {
     });
 
     try {
-      final status = await Permission.notification.request();
+      print('🔔 Requesting notification permission...');
+      
+      // Use flutter_local_notifications to trigger the native iOS dialog
+      final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      
+      // For iOS, this should trigger the native permission dialog
+      final iosPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      
+      bool granted = false;
+      
+      if (iosPlugin != null) {
+        // This should show the native iOS permission dialog
+        print('🍎 Requesting iOS notification permissions...');
+        final result = await iosPlugin.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        granted = result ?? false;
+        print('🍎 iOS permission result: $granted');
+      } else {
+        // For Android, use permission_handler
+        print('🤖 Requesting Android notification permissions...');
+        final status = await Permission.notification.request();
+        granted = status.isGranted;
+        print('🤖 Android permission result: $status');
+      }
+      
+      // Update our state
+      final finalStatus = await Permission.notification.status;
       setState(() {
-        _notificationStatus = status;
+        _notificationStatus = finalStatus;
         _isRequesting = false;
       });
 
-      if (status.isGranted) {
-        _showSuccess('wizard_notification.success_enabled'.tr());
-      } else if (status.isDenied) {
-        _showInfo('wizard_notification.info_denied'.tr());
-      } else if (status.isPermanentlyDenied) {
-        _showError('wizard_notification.error_permanently_denied'.tr());
+      print('🔔 Final permission status: $finalStatus');
+      print('🔔 Granted: $granted');
+
+      // Show result to user
+      if (granted) {
+        print('✅ Notification permission granted successfully');
+        _showSuccess('Notifications enabled successfully!');
+      } else {
+        print('⚠️ Notification permission denied by user');
+        _showInfo('Notifications not enabled - you can enable them later in Settings');
       }
     } catch (e) {
+      print('❌ Error requesting notification permission: $e');
       setState(() {
         _isRequesting = false;
       });
-      _showError('${'wizard_notification.error_request'.tr()} $e');
+      _showError('Failed to request notification permission: $e');
     }
   }
 
@@ -194,7 +241,8 @@ class _WizardNotificationState extends State<WizardNotification> {
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.setBool('notifications_enabled', false);
                         if (!mounted) return;
-                        _navigateToComments();
+                        // Use PageView navigation instead of direct navigation
+                        Provider.of<WizardProvider>(context, listen: false).nextPage();
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: colorScheme.surface,
@@ -219,57 +267,15 @@ class _WizardNotificationState extends State<WizardNotification> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isRequesting ? null : () async {
-                        setState(() => _isRequesting = true);
-                        try {
-                          // Request notification permissions
-                          final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-                          bool granted = true;
-
-                          // Android permissions
-                          final androidPlugin = flutterLocalNotificationsPlugin
-                              .resolvePlatformSpecificImplementation<
-                                AndroidFlutterLocalNotificationsPlugin
-                              >();
-                          if (androidPlugin != null) {
-                            final result = await androidPlugin.requestNotificationsPermission();
-                            if (result != null && result == false) granted = false;
-                          }
-
-                          // iOS permissions
-                          final iosPlugin = flutterLocalNotificationsPlugin
-                              .resolvePlatformSpecificImplementation<
-                                IOSFlutterLocalNotificationsPlugin
-                              >();
-                          if (iosPlugin != null) {
-                            final result = await iosPlugin.requestPermissions(
-                              alert: true,
-                              badge: true,
-                              sound: true,
-                            );
-                            if (result != null && result == false) granted = false;
-                          }
-
-                          // Save preference
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool('notifications_enabled', granted);
-
-                          if (!mounted) return;
-                          _navigateToComments();
-                        } catch (e) {
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'wizard_notification.error_failed'.tr(),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } finally {
-                          if (mounted) {
-                            setState(() => _isRequesting = false);
-                          }
+                        await _requestNotificationPermission();
+                        
+                        // Save preference based on final status
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('notifications_enabled', _notificationStatus?.isGranted ?? false);
+                        
+                        // Always continue to next screen regardless of permission result
+                        if (mounted) {
+                          Provider.of<WizardProvider>(context, listen: false).nextPage();
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -312,7 +318,8 @@ class _WizardNotificationState extends State<WizardNotification> {
           label: 'wizard_notification.continue'.tr(),
           onPressed: () {
             AppHaptics.continue_vibrate();
-            _navigateToComments();
+            // Use PageView navigation instead of direct navigation
+            Provider.of<WizardProvider>(context, listen: false).nextPage();
           },
           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
         ),

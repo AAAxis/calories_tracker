@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:calories_tracker/features/models/meal_model.dart';
 import 'package:calories_tracker/core/services/nutrition_database_service.dart';
+import 'package:calories_tracker/core/services/translation_service.dart';
 
 class EditIngredientsView extends StatefulWidget {
   const EditIngredientsView({super.key, required this.ingredient});
@@ -34,21 +35,48 @@ class _EditIngredientsViewState extends State<EditIngredientsView> {
 
   Ingredient _createUpdatedIngredient() {
     // Calculate nutrition based on new grams
-    final nutrition = NutritionDatabaseService.calculateNutrition(widget.ingredient.name, _grams * _servings);
+    final totalGrams = _grams * _servings;
+    final nutrition = NutritionDatabaseService.calculateNutrition(widget.ingredient.name, totalGrams);
     
-    return Ingredient(
+    final updatedIngredient = Ingredient(
       name: widget.ingredient.name,
-      grams: _grams * _servings,
+      grams: totalGrams,
       calories: nutrition['calories'] ?? 0,
       protein: nutrition['proteins'] ?? 0,
       carbs: nutrition['carbs'] ?? 0,
       fat: nutrition['fats'] ?? 0,
     );
+    
+    return updatedIngredient;
+  }
+
+  /// Get translated ingredient name
+  Future<String> _getTranslatedIngredientName() async {
+    try {
+      final locale = context.locale.languageCode;
+      
+      // If already in English, no need to translate
+      if (locale == 'en') {
+        return widget.ingredient.name;
+      }
+      
+      // Translate using TranslationService
+      final translatedName = await TranslationService.translateIngredient(
+        widget.ingredient.name,
+        locale,
+      );
+      
+      return translatedName;
+    } catch (e) {
+      print('❌ Error translating ingredient name: $e');
+      return widget.ingredient.name; // Fallback to original
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final ingredient = widget.ingredient;
+    final currentIngredient = _createUpdatedIngredient(); // Cache the calculated ingredient
     return Scaffold(
       body: SingleChildScrollView(
         child: Wrapper(
@@ -96,17 +124,23 @@ class _EditIngredientsViewState extends State<EditIngredientsView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          ingredient.name,
-                          style: GoogleFonts.poppins(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+                        FutureBuilder<String>(
+                          future: _getTranslatedIngredientName(),
+                          builder: (context, snapshot) {
+                            final translatedName = snapshot.data ?? widget.ingredient.name;
+                            return Text(
+                              translatedName,
+                              style: GoogleFonts.poppins(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${(_grams * _servings).toStringAsFixed(0)}g, ${(_createUpdatedIngredient().calories).toStringAsFixed(0)} kcal',
+                          '${(_grams * _servings).toStringAsFixed(0)}g, ${currentIngredient.calories.toStringAsFixed(0)} kcal',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: Colors.grey[700],
@@ -138,7 +172,7 @@ class _EditIngredientsViewState extends State<EditIngredientsView> {
                                       child: CustomPaint(
                                         size: const Size(300, 160),
                                         painter: CalorieGaugePainter(
-                                          fillPercent: 0.7,
+                                          fillPercent: (currentIngredient.calories / 400).clamp(0.0, 1.0),
                                           segments: 22,
                                           filledColor: Colors.black.withOpacity(
                                             0.7,
@@ -158,7 +192,7 @@ class _EditIngredientsViewState extends State<EditIngredientsView> {
                                       child: Column(
                                         children: [
                                           AppText(
-                                            '188',
+                                            '${currentIngredient.calories.toStringAsFixed(0)}',
                                             fontSize: 28,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600,
@@ -187,20 +221,20 @@ class _EditIngredientsViewState extends State<EditIngredientsView> {
                                     children: [
                                       CalorieTrackerProgressBar(
                                         title: 'common.protein'.tr(),
-                                        value: 0.58,
-                                        overallValue: '8g',
+                                        value: (currentIngredient.protein / 90).clamp(0.0, 1.0),
+                                        overallValue: '${currentIngredient.protein.toStringAsFixed(0)}g',
                                         color: AppColors.greenColor,
                                       ),
                                       CalorieTrackerProgressBar(
                                         title: 'common.fats'.tr(),
-                                        value: 0.8,
-                                        overallValue: '16g',
+                                        value: (currentIngredient.fat / 70).clamp(0.0, 1.0),
+                                        overallValue: '${currentIngredient.fat.toStringAsFixed(0)}g',
                                         color: AppColors.redColor,
                                       ),
                                       CalorieTrackerProgressBar(
                                         title: 'common.carbs'.tr(),
-                                        value: 0.48,
-                                        overallValue: '7g',
+                                        value: (currentIngredient.carbs / 110).clamp(0.0, 1.0),
+                                        overallValue: '${currentIngredient.carbs.toStringAsFixed(0)}g',
                                         color: AppColors.yellowColor,
                                       ),
                                     ],

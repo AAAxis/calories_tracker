@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../firebase_options.dart';
 import '../store/shared_pref.dart';
+import '../services/image_cache_service.dart';
 
 Future<void> initializeApp({
   required VoidCallback onSuccess,
@@ -21,6 +22,9 @@ Future<void> initializeApp({
     
     // Initialize SharedPreferences
     await SharedPref.init();
+    
+    // Initialize ImageCacheService
+    await ImageCacheService.initialize();
 
     onSuccess();
   } catch (error, stackTrace) {

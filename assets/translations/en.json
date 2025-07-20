@@ -1,4 +1,26 @@
 {
+  "onboarding": {
+    "effortless_calorie_tracking": "Effortless Calorie Tracking",
+    "snap_meal": "Snap a photo of your meal and get instant nutrition analysis",
+    "continue": "Continue"
+  },
+  "onboarding2": {
+    "skip": "Skip",
+    "scanning": "Scanning...",
+    "rib_eye_steak": "Rib Eye Steak",
+    "kcal": "kcal",
+    "protein": "Protein",
+    "fats": "Fats",
+    "carbs": "Carbs",
+    "continue": "Continue"
+  },
+  "onboarding3": {
+    "weight_goal": "Weight Goal",
+    "weight_value": "75 kg",
+    "transform_body": "Transform your body with AI-powered nutrition tracking",
+    "start_today": "Start your journey today",
+    "get_started": "Get Started"
+  },
   "wizard": {
     "how_old_are_you": "How old are you?",
     "choose_language": "Choose your language",
@@ -65,6 +87,147 @@
     "next": "Next",
     "complete": "Complete",
     "calories_left": "Calories left"
+  },
+  "wizard_hear_about_us": {
+    "app_title": "Kaliai",
+    "where_did_you_hear": "Where did you hear about us?",
+    "subtitle": "This helps us understand how people discover our app",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "website": "Website",
+    "tiktok": "TikTok",
+    "continue": "Continue"
+  },
+  "wizard_gender": {
+    "title": "What is your gender?",
+    "subtitle": "This helps us personalize your experience",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "continue": "Continue"
+  },
+  "wizard_weight": {
+    "title": "What is your current weight?",
+    "subtitle": "Enter your current weight",
+    "lbs": "LBS",
+    "kgs": "KGS",
+    "kg": "kg",
+    "lb": "lb",
+    "continue": "Continue"
+  },
+  "wizard_height": {
+    "title": "What is your height?",
+    "subtitle": "Enter your height",
+    "inches": "Inches",
+    "cm": "CM",
+    "continue": "Continue"
+  },
+  "wizard_age": {
+    "title": "How old are you?",
+    "subtitle": "Enter your age",
+    "continue": "Continue"
+  },
+  "wizard_goal_type": {
+    "title": "What is your main goal?",
+    "subtitle": "Select your primary fitness goal",
+    "lose_weight": "Lose Weight",
+    "maintain_weight": "Maintain Weight",
+    "gain_weight": "Gain Weight",
+    "continue": "Continue"
+  },
+  "wizard_diet_type": {
+    "title": "What is your diet type?",
+    "subtitle": "Select your dietary preferences",
+    "regular": "Regular",
+    "vegetarian": "Vegetarian",
+    "vegan": "Vegan",
+    "keto": "Keto",
+    "continue": "Continue"
+  },
+  "wizard_workout": {
+    "title": "How often do you work out?",
+    "subtitle": "Select your workout frequency",
+    "option_0_2": "0-2 times per week",
+    "option_2_4": "2-4 times per week",
+    "option_4_6": "4-6 times per week",
+    "option_6_8": "6-8 times per week",
+    "continue": "Continue"
+  },
+  "wizard_motivation_achievement": {
+    "losing": "Losing",
+    "gaining": "Gaining",
+    "kg": "kg",
+    "gain_message": "Gain weight healthily",
+    "lose_message": "Lose weight healthily",
+    "continue": "Continue"
+  },
+  "wizard_how_fast": {
+    "title": "How fast do you want to reach your goal?",
+    "subtitle": "Choose your preferred pace",
+    "kg_per_week": "kg per week",
+    "slow": "Slow & Steady",
+    "medium": "Moderate",
+    "fast": "Fast",
+    "advice_lose_good": "Gradual weight loss is more sustainable",
+    "continue": "Continue"
+  },
+  "wizard_loading_page": {
+    "building_message": "We are building your personalized plan..."
+  },
+  "wizard_referral": {
+    "title": "Do you have a referral code?",
+    "applied": "Applied!",
+    "submit": "Apply"
+  },
+  "wizard_great_potential": {
+    "title": "You have great potential!",
+    "how_to_reach_goals": "How to reach your goals:",
+    "consistency_tip": "Consistency is key to reaching your goals",
+    "continue": "Continue"
+  },
+  "wizard_summary": {
+    "how_to_reach_goals": "How to reach your goals:",
+    "goal_tip_1": "Track your meals daily",
+    "goal_tip_2": "Stay within your calorie goals",
+    "goal_tip_3": "Exercise regularly",
+    "goal_tip_4": "Stay hydrated"
+  },
+  "wizard_notification": {
+    "title": "Enable Notifications",
+    "description": "Get reminders to track your meals and stay on track",
+    "dont_allow": "Don't Allow",
+    "allow": "Allow Notifications",
+    "settings_note": "You can change this in settings later",
+    "continue": "Continue"
+  },
+  "wizard_recommendation": {
+    "title": "What our users say",
+    "rating": "4.8 stars",
+    "total_reviews": "2,500+ reviews",
+    "review_1_name": "Sarah M.",
+    "review_1_text": "This app helped me lose 15 pounds in 3 months!",
+    "review_2_name": "John D.",
+    "review_2_text": "Simple and effective. Love the meal tracking feature.",
+    "continue": "Continue"
+  },
+  "wizard_upload_image": {
+    "title": "Upload your photo",
+    "add_photo": "Add Photo",
+    "skip_for_now": "Skip for now",
+    "continue": "Continue"
+  },
+  "wizard_dream_weight": {
+    "title": "What is your dream weight?",
+    "subtitle": "Enter your target weight goal",
+    "lbs": "LBS",
+    "kgs": "KGS", 
+    "kg": "kg",
+    "lb": "lb",
+    "continue": "Continue"
+  },
+  "wizard_account_summary": {
+    "title": "Account Summary",
+    "description": "Your personalized plan is ready!"
   },
   "language": {
     "english": "English",
@@ -137,18 +300,35 @@
     "calories_left": "Calories left",
     "calories_over": "Calories over",
     "no_meals_today_motivation": "No meals tracked today. Stay motivated!",
-    "start_tracking_meals": "Start tracking your meals"
+    "start_tracking_meals": "Start tracking your meals",
+    "analyzing": "Analyzing..."
   },
   "profile": {
     "my_profile": "My Profile",
     "personal_information": "Personal Information",
+    "subscriptions": "Subscriptions",
+    "language": "Language",
+    "privacy_policy": "Privacy Policy",
     "my_meals": "My Meals",
     "nutrition_report": "Nutrition Report",
     "favorites_food": "Favorites Food",
     "log_out": "Log out",
-    "error_during_logout": "Error during logout: "
+    "error_during_logout": "Error during logout: ",
+    "select_language": "Select Language",
+    "cancel": "Cancel",
+    "error_opening_subscriptions": "Could not open subscription settings",
+    "error_opening_privacy": "Could not open privacy policy",
+    "image_uploaded_successfully": "Profile image uploaded successfully!",
+    "image_upload_failed": "Failed to upload image. Please try again."
   },
   "item_detail": {
+    "add_to_favorites": "Add to favorites",
+    "edit_meal": "Edit meal",
+    "rename_meal": "Rename Meal",
+    "enter_new_meal_name": "Enter new meal name",
+    "meal_updated": "Meal updated!",
+    "added_to_favorites": "Added to favorites!",
+        "meal_renamed_to": "Meal renamed to",
     "meal_calories": "Meal Calories",
     "ingredients": "Ingredients",
     "nutrition": "Nutrition",
@@ -169,6 +349,9 @@
     "suggestions": "Suggestions",
     "search_hint": "search for any ingredient",
     "add_ingredients": "Add Ingredients",
+    "search_results": "Search Results",
+    "no_results": "No ingredients found",
+    "try_different_search": "Try searching with different keywords",
     "ingredients_list": {
       "plain_yogurt": "Plain Yogurt",
       "peanut_butter": "Peanut Butter",
@@ -223,6 +406,7 @@
     "add": "Add",
     "user_data": "User Data",
     "email": "Email Address",
+    "user_email": "Email Address",
     "display_name": "Display Name",
     "diet_type": "Diet Type",
     "health_goal": "Health Goal",
@@ -261,7 +445,11 @@
     "restart_wizard": "Restart Setup",
     "restart_wizard_confirm": "Are you sure you want to restart the setup process? Your current settings will be reset.",
     "restart": "Restart",
-    "restart_wizard_description": "Start the setup process again to update your goals and preferences"
+    "restart_wizard_description": "Start the setup process again to update your goals and preferences",
+    "view_wizard_data": "View Wizard Data",
+    "view_wizard_data_description": "Display all wizard data as JSON",
+    "complete_dashboard": "Complete Dashboard Setup",
+    "dashboard_completed": "Dashboard completed! You can now access other features."
   },
   "error": {
     "saving_language": "Error saving language"
@@ -312,7 +500,8 @@
     "no_active_subscription": "No active subscription found",
     "terms": "Terms of Use",
     "eula": "EULA",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "show_all": "Show All"
   },
   "redeem_code_heading": "Redeem Promo Code",
   "enter_promo_code_hint": "Enter promo code",
@@ -451,6 +640,11 @@
     "learn_more_title": "Learn More",
     "analyzing": "Analyzing...",
     "analysis_failed": "Analysis failed",
+    "add_more": "Add More",
+    "remove_ingredient": "Remove Ingredient",
+    "remove_ingredient_question": "Are you sure you want to remove",
+    "cancel": "Cancel",
+    "remove": "Remove",
     "healthiness": {
       "healthy": "Healthy",
       "medium": "Medium",
@@ -876,7 +1070,7 @@
     "title": "What Our Customers\nthink of us",
     "rating": "4.7",
     "total_reviews": "14,536",
-    "create_account": "Create Account",
+    "continue": "Continue",
     "review_1_name": "Anthony Levandowski",
     "review_1_text": "There are so many avenues of self-improvement within this app. From relaxation to confidence.",
     "review_2_name": "Benny Marcs",
@@ -910,9 +1104,157 @@
     "apple_sign_in_failed": "Apple sign in failed",
     "google_sign_in_failed": "Google sign in failed"
   },
+  "wizard_loading_page": {
+    "building_message": "Building your personalized plan...",
+    "daily_recommendations": "Daily Recommendations",
+    "recommendation_1": "Track your daily calorie intake",
+    "recommendation_2": "Eat balanced meals with proper macros",
+    "recommendation_3": "Stay hydrated throughout the day",
+    "recommendation_4": "Exercise regularly to reach your goals",
+    "recommendation_5": "Monitor your progress consistently",
+    "status_initializing": "Initializing your profile...",
+    "status_analyzing": "Analyzing your data...",
+    "status_calculating": "Calculating your goals...",
+    "status_optimizing": "Optimizing your plan...",
+    "status_finalizing": "Finalizing recommendations...",
+    "status_almost_ready": "Almost ready...",
+    "status_ready": "Your plan is ready!",
+    "continue": "Continue"
+  },
+  "wizard_summary": {
+    "congratulations": "Congratulations!",
+    "custom_plan_ready": "Your custom plan is ready!",
+    "daily_recommendations": "Your Daily Nutrition Goals",
+    "calories": "Calories",
+    "kcal": "kcal",
+    "protein": "Protein",
+    "g": "g",
+    "carbs": "Carbs",
+    "fats": "Fats",
+    "continue": "Continue",
+    "calculating_goal": "Calculating your goal...",
+    "goal_lose": "lose weight",
+    "goal_maintain": "maintain weight",
+    "goal_gain": "gain weight",
+    "you_should": "You should",
+    "kg_by": "kg by",
+    "weeks": "weeks",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "how_to_reach_goals": "How to reach your goals",
+    "goal_tip_1": "Track your meals consistently",
+    "goal_tip_2": "Stay within your calorie budget",
+    "goal_tip_3": "Exercise regularly",
+    "goal_tip_4": "Get adequate sleep and rest"
+  },
+  "wizard_apple_health": {
+    "title": "Connect Apple Health",
+    "subtitle": "Sync your health data",
+    "description": "Connect your Apple Health app to automatically track your weight, activity, and other health metrics.",
+    "done": "Connected",
+    "not_connected": "Not Connected"
+  },
+  "wizard_great_potential": {
+    "title": "Great! You have potential!",
+    "how_to_reach_goals": "How to reach your goals",
+    "consistency_tip": "Consistency is key to achieving your health goals. Small daily actions lead to big results!",
+    "continue": "Continue"
+  },
+  "wizard_recommendation": {
+    "title": "What do you think of our app?",
+    "rating": "4.9",
+    "total_reviews": "(2,847 reviews)",
+    "review_1_name": "Sarah M.",
+    "review_1_text": "Amazing app! Helped me lose 15 pounds in 3 months. Love the meal tracking feature.",
+    "review_2_name": "Mike R.",
+    "review_2_text": "Great interface and helpful recommendations. Finally an app that works!",
+    "continue": "Continue"
+  },
+  "bottom_nav": {
+    "fridge": "Fridge",
+    "coming_soon": "Coming Soon!"
+  },
+  "dashboard": {
+    "get_premium": "Get Premium",
+    "premium": "Premium",
+    "daily_calories_left": "Daily calories left",
+    "meals_logged_motivation": "Great job! Keep tracking your meals!",
+    "no_meals_today_motivation": "Start your day by logging your first meal!",
+    "recently_uploaded": "Recently Uploaded",
+    "no_recently_uploaded": "No recent uploads",
+    "start_tracking_meals": "Start tracking your meals",
+    "delete_meal": "Delete Meal",
+    "delete_meal_question": "Are you sure you want to delete this meal?",
+    "delete_cannot_be_undone": "This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting_meal": "Deleting meal...",
+    "meal_deleted_success": "Meal deleted successfully",
+    "meal_delete_failed": "Failed to delete meal",
+    "swipe_to_delete_hint": "💡 Swipe left on any meal to delete",
+    "meals_for_date": "Meals for",
+    "no_meals_on_date": "No meals on",
+    "time_days_ago": "d ago",
+    "time_hours_ago": "h ago", 
+    "time_minutes_ago": "m ago",
+    "time_just_now": "Just now",
+    "try_different_date": "Try selecting a different date or add meals for this day",
+    "water_intake": "Water Intake",
+    "litres": "L",
+    "streaks_count": "Day Streak",
+    "you_doing_great": "You're doing great!",
+    "current_weight": "Current Weight",
+    "kg": "kg",
+    "steps": "Steps",
+    "calendar": {
+      "day_short_sat": "Sat",
+      "day_short_sun": "Sun", 
+      "day_short_mon": "Mon",
+      "day_short_tue": "Tue",
+      "day_short_wed": "Wed",
+      "day_short_thu": "Thu",
+      "day_short_fri": "Fri"
+    }
+  },
+  "common": {
+    "protein": "Protein",
+    "fats": "Fats", 
+    "carbs": "Carbs",
+    "calories": "Calories",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "remove": "Remove",
+    "removed": "removed",
+    "range": "Range",
+    "display_name": "Display Name",
+    "email": "Email",
+    "user_data": "User Data",
+    "restart_wizard": "Restart Wizard",
+    "restart_wizard_confirm": "Are you sure you want to restart the setup wizard?",
+    "restart_wizard_description": "This will reset all your preferences and guide you through the setup process again.",
+    "restart": "Restart",
+    "delete_account": "Delete Account",
+    "delete_account_confirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "delete": "Delete",
+    "account_deleted": "Account deleted successfully"
+  },
   "food_items": {
     "burger": "Burger",
     "pizza": "Pizza",
     "white_sauce_pasta": "White Sauce Pasta"
+  },
+  "stats": {
+    "title": "Stats",
+    "water_intake": "Water Intake",
+    "progress_and_stats": "Progress & Stats"
+  },
+  "camera_options": {
+    "scan_meal": "Scan Meal",
+    "scan_ingredient": "Scan Ingredient",
+    "scan_receipt": "Scan Receipt",
+    "log_manually": "Log Manually"
   }
 }
