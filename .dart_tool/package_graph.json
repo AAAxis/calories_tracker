@@ -40,8 +40,10 @@
         "provider",
         "purchases_flutter",
         "purchases_ui_flutter",
+        "readmore",
         "shared_preferences",
         "sign_in_with_apple",
+        "syncfusion_flutter_charts",
         "url_launcher",
         "uuid",
         "vibration"
@@ -141,6 +143,23 @@
         "web",
         "web_socket_channel",
         "yaml"
+      ]
+    },
+    {
+      "name": "readmore",
+      "version": "3.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "syncfusion_flutter_charts",
+      "version": "30.1.40",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "syncfusion_flutter_core",
+        "vector_math"
       ]
     },
     {
@@ -1020,6 +1039,14 @@
         "source_span",
         "watcher",
         "yaml"
+      ]
+    },
+    {
+      "name": "syncfusion_flutter_core",
+      "version": "30.1.40",
+      "dependencies": [
+        "flutter",
+        "vector_math"
       ]
     },
     {

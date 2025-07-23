@@ -3,6 +3,7 @@ import 'package:calories_tracker/core/constants/wrapper.dart';
 import 'package:calories_tracker/core/styles/styles.dart';
 import 'package:calories_tracker/gen/assets.gen.dart';
 import 'package:calories_tracker/modules/dashboard/views/dashboard_view.dart';
+import 'package:calories_tracker/modules/fridge/view/fridge_page.dart';
 import 'package:calories_tracker/utils/responsive_extension.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _BottomNavViewState extends State<BottomNavView> {
     const DashboardView(),
     const StatsView(), // Real stats view with water, steps, streaks, weight
     CameraOptionsView(),
-    PlaceholderWidget(title: 'bottom_nav.fridge'.tr(), icon: Icons.fork_right_rounded),
+    FridgePage(),
   ];
 
   @override
