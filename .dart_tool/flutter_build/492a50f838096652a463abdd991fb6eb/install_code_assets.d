@@ -1,0 +1,1 @@
+ /Users/m1/Downloads/calories_tracker/.dart_tool/flutter_build/492a50f838096652a463abdd991fb6eb/native_assets.json: 

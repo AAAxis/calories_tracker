@@ -15,7 +15,7 @@ void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await EasyLocalization.ensureInitialized();
-    
+
     // Initialize app services
     await initializeApp(
       onSuccess: () {
@@ -26,7 +26,7 @@ void main() async {
         print(stackTrace.toString());
       },
     );
-    
+
     // Run app with localization support
     runApp(
       EasyLocalization(
@@ -65,7 +65,10 @@ class MyApp extends StatelessWidget {
             lazy: false,
           ),
           ChangeNotifierProvider(
-            create: (_) => WizardProvider(totalScreens: WizardPager.getTotalScreenCount()),
+            create:
+                (_) => WizardProvider(
+                  totalScreens: WizardPager.getTotalScreenCount(),
+                ),
           ),
           ChangeNotifierProvider(create: (_) => LoadingProvider()),
         ],
@@ -82,7 +85,10 @@ class MyApp extends StatelessWidget {
           builder: (context, child) {
             // Initialize DashboardProvider after the widget tree is built
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+              final dashboardProvider = Provider.of<DashboardProvider>(
+                context,
+                listen: false,
+              );
               dashboardProvider.initialize();
             });
             return child!;
