@@ -1,0 +1,6 @@
+build/
+*.lock
+.dart_tool/
+.packages
+.idea/
+ios/Pods/build/
